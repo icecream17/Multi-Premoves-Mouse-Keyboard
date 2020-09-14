@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-   
+
 
    let consoleNew = console.log;
    console.log = () => { }
@@ -142,10 +142,16 @@
          console.log(myColor, oppColor)
          //end from Vempele's code https://gist.github.com/Vempele/46333e85e33b6d488c3ffb131942272d
 
-         let scriptTagWithInfo = document.getElementsByTagName('script')[2]
-         let indexOfBoot = scriptTagWithInfo.text.indexOf('boot(') + 5;
+
+         let scriptCollection = document.getElementsByTagName('script');
+         let scriptTagWithInfo;/*  = document.getElementsByTagName('script')[2] */
+         for (let i = 0; i < scriptCollection.length; i++) {
+            if (scriptCollection[i].text.includes('fen')) { scriptTagWithInfo = scriptCollection[i].text }
+         }
+
+         let indexOfBoot = scriptTagWithInfo.indexOf('boot(') + 5;
          let parsableGameInfo = scriptTagWithInfo
-            .text.substr(indexOfBoot, scriptTagWithInfo.text.length - 2 - indexOfBoot);
+            .substr(indexOfBoot, scriptTagWithInfo.length-1-indexOfBoot );
          let gameInfo;
          try {
             gameInfo = JSON.parse(parsableGameInfo);
@@ -208,13 +214,13 @@
                if (isEmpty(storeCoordIfSameSquare === false)) {
                   checkIfPossibleClickMoveWasMade(storeCoordIfSameSquare, e).then(
                      (objResult) => {
-if (objResult.sameSquare === false) {
-  // previousMoveIsClickMove = false; ?checking if the premove is legal
-  window.postMessage({ type: 'move', objResult }, "*");
-}
-else {
-   
-}
+                        if (objResult.sameSquare === false) {
+                           // previousMoveIsClickMove = false; ?checking if the premove is legal
+                           window.postMessage({ type: 'move', objResult }, "*");
+                        }
+                        else {
+
+                        }
                      }
                   )
                }

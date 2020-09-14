@@ -2,6 +2,13 @@ MIT License
 
 Copyright (c) 2020 Sentero-esp12
 
+The project also includes code from
+- https://gist.github.com/Vempele/46333e85e33b6d488c3ffb131942272d
+- https://github.com/pukhrajbal/lichess-clock
+- https://github.com/frogcat/canvas-arrow
+- Stackoverflow (significant parts commented in the code)
+- https://github.com/jhlywa/chess.js
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights

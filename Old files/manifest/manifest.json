@@ -7,6 +7,19 @@
         "default_title": "Settings",
         "default_popup": "UI.html"
       },
+     "background": {
+        "persistent": true,
+        "scripts": [
+            "background.js"
+        ]
+    }, 
+    "key": "MIGfMA3GCSqGSIb3DFEBAQUAA4GNADCBiQKBgQDcBHwzDvyBQ6bDppkIs9MP4ksKqCMyXQ/A52JivHZKh4YO/9vJsT3oaZhSpDCE9RCocOEQvwsHsFReW2nUEc6OLLyoCFFxIb7KkLGsmfakkut/fFdNJYh0xOTbSN8YvLWcqph09XAY2Y/f0AL7vfO1cuCqtkMt8hFrBGWxDdf9CQIDAQAB",
+    "permissions": [
+        "webRequest",
+        "webRequestBlocking",
+        "\u003Call_urls>",
+        "nativeMessaging"
+    ],
     "content_scripts": [
         {
             "matches": [
@@ -22,6 +35,7 @@
     ],
     "web_accessible_resources": [
         "chess.js",
-        "script.js"
+        "script.js",
+        "round.js"
     ]
 }

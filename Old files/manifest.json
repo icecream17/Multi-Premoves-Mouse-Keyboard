@@ -3,25 +3,26 @@
     "name": "Lichess Multi Premoves",
     "description": "Lichess Multi Premoves",
     "version": "0.0.0.1",
-    "browser_action": {
-        "default_title": "Settings",
-        "default_popup": "UI.html"
-      },
+    "background": {
+        "scripts": ["background.js"]
+    },
     "content_scripts": [
         {
             "matches": [
+                "http://lichess.org/*",
                 "https://lichess.org/*",
-                "https://lichess.dev/*",
-                "https://mskchess.ru/*"
+                "https://lichess.dev/*"
             ],
             "js": [
                 "content.js"
+            ],
+            "css": [
+                "style.css"
             ],
             "run_at": "document_start"
         }
     ],
     "web_accessible_resources": [
-        "chess.js",
-        "script.js"
+        "tamper.js", "chessboard-1.0.0.min.js", "jquery.min.js"
     ]
 }
