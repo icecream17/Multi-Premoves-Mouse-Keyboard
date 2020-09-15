@@ -1,41 +1,3 @@
-let settingsObject = {
-   useMouse: true,
-   useKeyboard: false,
-   useUltrabulletTheme: false,
-   drawTimeRatio: false,
-   sendToBackgroundToProduceSound: false,
-   animateMultipremoves: true,
-   createUI: true,
-   berserkBack: false,
-   pawnLeft: '',
-   pawnUp: '',
-   pawnRight: '',
-   king: '',
-   bishop: '',
-   rook: '',
-   rookRight: '',
-   knight: '',
-   knightRight: '',
-   queen: '',
-   queenSecond: '',
-   multipremove: '',
-   cancelPremoves: '`',
-   rematch: '',
-   resign: '',
-   berserk: '',
-   backToTournament: '',
-   rightButton: 'multipremove',
-   leftButton: '',
-   buttonsAdvanced: true,
-   downEvent: 'mousedown',
-   upEvent: 'mouseup',
-   moveEvent: 'mousemove',
-   handleTouchscreens: true,
-   createIndicator: true,
-   detectPrevKB: true,
-   experimentalArrows: true
-}
-
 if (settingsObject.createUI === true) {
    const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
    let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
@@ -71,6 +33,7 @@ if (isGame === true) {
       function touchHandler(event) {
          event.preventDefault();
          event.stopImmediatePropagation();
+         event.stopPropagation();
          var touches = event.changedTouches,
             first = touches[0],
             type = "";
@@ -84,18 +47,30 @@ if (isGame === true) {
          //                screenX, screenY, clientX, clientY, ctrlKey, 
          //                altKey, shiftKey, metaKey, button, relatedTarget);
 
-         var simulatedEvent = document.createEvent("MouseEvent");
+         /* var simulatedEvent = document.createEvent("MouseEvent");
          simulatedEvent.initMouseEvent(type, true, true, window, 1,
             first.screenX, first.screenY,
             first.clientX, first.clientY, false,
-            false, false, false, 0/*left*/, null);
-         first.target.dispatchEvent(simulatedEvent);
+            false, false, false, 0, null);
+         simulatedEvent.data = 'proceed'
+         first.target.dispatchEvent(simulatedEvent); */
+         let ev = new MouseEvent(type, {
+            "view": window,
+            "bubbles": true,
+            "cancelable": true,
+            "clientX": first.clientX,
+            "clientY": first.clientY
+         });
+         ev.data = 'proceed';
+         first.target.dispatchEvent(ev);
       }
       function init() {
-         document.addEventListener("touchstart", touchHandler, true);
-         document.addEventListener("touchmove", touchHandler, true);
-         document.addEventListener("touchend", touchHandler, true);
-         document.addEventListener("touchcancel", touchHandler, true);
+         let options = {capture: true, passive: false}
+        //let options = true
+         document.addEventListener("touchstart", touchHandler, options);
+         document.addEventListener("touchmove", touchHandler, options);
+         document.addEventListener("touchend", touchHandler, options);
+         document.addEventListener("touchcancel", touchHandler, options);
       }
       init()
    }
@@ -166,7 +141,7 @@ if (isGame === true) {
       let myTurn;
       let isItAGame = true;
       let chess;
-      let delaysBeforeSendingMoves = { m: 0, o: 15 }
+      let delaysBeforeSendingMoves = { m: settingsObject.inMoveDelay, o: settingsObject.outMoveDelay }
       let lastMoveMadeUCI;
       let whoseMove;
       let myColor;
@@ -432,7 +407,6 @@ if (isGame === true) {
             }
             setTimeout(() => {
                //setTimeout(() => {
-               //console.info('incoming', performance.now(), document.getElementsByClassName("rclock rclock-bottom running")[0] !== undefined)
                objGA.setPieces(currentPieceSet);
                objGA.whoseM(whoseMove);
                objGA.moves(legalMoves);
@@ -2311,8 +2285,12 @@ if (isGame === true) {
             objGA.multiPremState = false;
             objGA.mainPremoveHasBeenMade = false;
             objGA.piecesStatesAfterPremoves = {};
-            objGA.DoubleData([5, 5], [5, 5]);
-            objGA.DoubleData([5, 5], [5, 5]);
+            /* objGA.DoubleData([5, 5], [5, 5]);
+            objGA.DoubleData([5, 5], [5, 5]); */
+            objGA.ApplyData([5, 5], [5, 5]);
+            objGA.DataTransition([5, 5], [5, 5]);
+            objGA.ApplyData([5, 5], [5, 5]);
+            objGA.DataTransition([5, 5], [5, 5]);
 
             if (useMouse === true && objGA.isAPieceSelected === true) {
                objGA.UnselectMultiSquare()
@@ -2461,7 +2439,7 @@ if (isGame === true) {
             } else {
             }
          }
-         if (useMouse === true && e.isTrusted === true && e.which === 1) {
+         if (useMouse === true && (e.isTrusted === true || e.data === 'proceed') && e.which === 1) {
             // console.log('down')
             if (objGA.checkIfTheBoardIsTheSameAtTheBeginning === true) {
                let cgBoardNow = document.getElementsByTagName('cg-board')[0];
@@ -2681,7 +2659,7 @@ if (isGame === true) {
                }
             }
          }
-         if (useMouse === true && e.isTrusted === true && e.which === 1) {
+         if (useMouse === true && (e.isTrusted === true || e.data === 'proceed') && e.which === 1) {
             //console.log('up')
             if (objGA.runDebugger) { debugger; }
             if (objGA.multiPremKeyPressed === true
@@ -3095,13 +3073,16 @@ if (isGame === true) {
             objGA.ApplyData(a[0], a[1]);
             //objGA.DataTransition(a[0],a[1]);
             //objGA.ApplyData(b[0],b[1]);
-            objGA.DataTransition(b[0], b[1], true);
+            objGA.DataTransition(b[0], b[1]);
          } else {
+
+            //setTimeout(function () {
             objGA.ApplyData(a[0], a[1]);
             objGA.DataTransition(a[0], a[1]);
             objGA.ApplyData(b[0], b[1]);
-            objGA.DataTransition(b[0], b[1], true);
+            objGA.DataTransition(b[0], b[1]/* , true */);
             //}, 0);
+            objGA.Unselect.async()
          }
 
          /*  if (BothClickAndDrug === false) {
@@ -3117,7 +3098,7 @@ if (isGame === true) {
          globalX = b[0]; globalY = b[1];
       },
       Unselect: (tx, ty) => {
-         let ds = objGA.board.children;
+         /* let ds = objGA.board.children;
          let length = ds.length;
          for (let i = 0; i < length; ++i) {
             if (ds[i].className.includes("selected")) {
@@ -3126,6 +3107,16 @@ if (isGame === true) {
                return;
                break;
             }
+         } */
+         let selected = objGA.board.getElementsByClassName('selected')[0];
+         if (selected !== undefined) {
+            let transform = selected.style.transform;
+            let extraction = transform.split(',');
+            extraction[0] = Number(extraction[0].replace(/\D/g, '')) + objGA.sqsize / 2;
+            extraction[1] = Number(extraction[1].replace(/\D/g, '')) + objGA.sqsize / 2;
+
+            objGA.ApplyData(extraction[0], extraction[1]);
+            objGA.DataTransition(extraction[0], extraction[1]);
          }
       },
       UnselectMultiSquare: () => {

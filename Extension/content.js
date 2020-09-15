@@ -1,41 +1,3 @@
-let settingsObject = {
-    useMouse: true,
-    useKeyboard: false,
-    useUltrabulletTheme: false,
-    drawTimeRatio: false,
-    sendToBackgroundToProduceSound: false,
-    animateMultipremoves: true,
-    createUI: true,
-    berserkBack: false,
-    pawnLeft: '',
-    pawnUp: '',
-    pawnRight: '',
-    king: '',
-    bishop: '',
-    rook: '',
-    rookRight: '',
-    knight: '',
-    knightRight: '',
-    queen: '',
-    queenSecond: '',
-    multipremove: '',
-    cancelPremoves: '`',
-    rematch: '',
-    resign: '',
-    berserk: '',
-    backToTournament: '',
-    rightButton: 'multipremove',
-    leftButton: '',
-    buttonsAdvanced: true,
-    downEvent: 'mousedown',
-    upEvent: 'mouseup',
-    moveEvent: 'mousemove',
-    handleTouchscreens: true,
-    createIndicator: true,
-    detectPrevKB: true,
-    experimentalArrows: true
- }
-
 if (settingsObject.createUI === true) {
     const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
     let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
@@ -117,10 +79,15 @@ window.expArrowFunction = () => {
 
 
     (() => {
+        let settingsjs = document.createElement('script');
         let script = document.createElement('script');
         let chessjs = document.createElement('script');
         /* let jquery = document.createElement('script'); */
 
+        settingsjs.src = chrome.runtime.getURL('settings.js');
+        settingsjs.onload = function () {
+            this.remove();
+        };
         script.src = chrome.runtime.getURL('script.js');
         script.onload = function () {
             this.remove();
@@ -129,11 +96,14 @@ window.expArrowFunction = () => {
         chessjs.onload = function () {
             this.remove();
         };
+
+        
         /* jquery.src = chrome.runtime.getURL('jquery-3.5.1.slim.min.js');
         jquery.onload = function () {
             this.remove();
         }; */
         /* (document.head || document.documentElement).appendChild(jquery); */
+        (document.head || document.documentElement).appendChild(settingsjs);
         (document.head || document.documentElement).appendChild(chessjs);
         (document.head || document.documentElement).appendChild(script);
 
@@ -1098,10 +1068,10 @@ var ultraCss =
  }
  
  square.premove-dest {
-    background-color: rgba(87, 123, 87, .8) !important;
+   /* background-color: rgba(87, 123, 87, .8) !important;
     background-color: rgba(87, 123, 87, .0) !important;
     pointer-events: auto;
-    display: none; 
+    display: none; */
  }
  
  square.last-move,

@@ -15,12 +15,14 @@
                 "https://mskchess.ru/*"
             ],
             "js": [
+                "settings.js",
                 "content.js"
             ],
             "run_at": "document_start"
         }
     ],
     "web_accessible_resources": [
+        "settings.js",
         "chess.js",
         "script.js"
     ]
