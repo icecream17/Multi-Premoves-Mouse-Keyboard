@@ -866,7 +866,7 @@ if (isGame === true) {
                if (possibles.length === 1) {
                   if (multi === false) {
 
-                     if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                     if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
 
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -894,7 +894,7 @@ if (isGame === true) {
                         if (isLeft) { objGA.PositionsOfDoublePieces[positionPieceName].l = c; }
                         else { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
 
-                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
 
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -911,7 +911,7 @@ if (isGame === true) {
                } else if (possibles.length > 1) {
 
                   if (multi === false) {
-                     rPcoord = objGA.ifTwoPieces(`right${pieceName} `);
+                     rPcoord = objGA.ifTwoPieces(`right${pieceName}`);
                      isRight = (possibles[0][0] === rPcoord[0] && possibles[0][1] === rPcoord[1]);
                      CurrentRightPiece = rPcoord;
 
@@ -933,7 +933,7 @@ if (isGame === true) {
                            CurrentRightPiece = possibles[0]
                         }
 
-                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
 
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -1004,7 +1004,7 @@ if (isGame === true) {
                if (possibles.length === 1) {
                   if (multi === false) {
 
-                     if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                     if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
 
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -1032,7 +1032,7 @@ if (isGame === true) {
                         if (isLeft) { objGA.PositionsOfDoublePieces[positionPieceName].l = c; }
                         else { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
 
-                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
 
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -1049,7 +1049,7 @@ if (isGame === true) {
                } else if (possibles.length > 1) {
 
                   if (multi === false) {
-                     rPcoord = objGA.ifTwoPieces(`right${pieceName} `);
+                     rPcoord = objGA.ifTwoPieces(`right${pieceName}`);
                      isRight = (possibles[0][0] === rPcoord[0] && possibles[0][1] === rPcoord[1]);
                      CurrentRightPiece = rPcoord;
 
@@ -1071,7 +1071,7 @@ if (isGame === true) {
                            CurrentRightPiece = possibles[0]
                         }
 
-                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
 
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -1120,7 +1120,7 @@ if (isGame === true) {
                   let rPcoord, isRight, isLeft;
                   if (possibles.length === 1) {
                      if (multi === false) {
-                        if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `, numberOfQueens), rPcoord !== void 0) {
+                        if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`, numberOfQueens), rPcoord !== void 0) {
                            CurrentRightPiece = rPcoord;
                            isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
                            if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
@@ -1134,7 +1134,7 @@ if (isGame === true) {
                            if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
                            else { objGA.PositionsOfDoublePieces[positionPieceName].l = c; }
 
-                        } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `, numberOfQueens), rPcoord !== void 0) {
+                        } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`, numberOfQueens), rPcoord !== void 0) {
 
                            CurrentRightPiece = rPcoord;
                            isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -1149,7 +1149,7 @@ if (isGame === true) {
                      let positionOfTheRightQueen;
                      if (multi === false) {
 
-                        rPcoord = objGA.ifTwoPieces(`right${pieceName} `, numberOfQueens);
+                        rPcoord = objGA.ifTwoPieces(`right${pieceName}`, numberOfQueens);
                         isRight = false;
 
                         for (let i = 0; i < possibles.length; i++) {
@@ -1188,7 +1188,7 @@ if (isGame === true) {
                  CurrentRightPiece = possibles[0]
                }
  
-             } */ else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `, numberOfQueens), rPcoord !== void 0) {
+             } */ else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`, numberOfQueens), rPcoord !== void 0) {
 
                            CurrentRightPiece = rPcoord;
                            isRight = false;
@@ -1600,7 +1600,7 @@ if (isGame === true) {
       },
 
       executeMove: (to, from, queens = false, multi = false, premove = false, piece, mousePremove = false) => {
-         if (objGA.runDebugger === true) { debugger; }
+
          let theCoord;
          theCoord = from.concat(to);
          for (let i = 0; i < theCoord.length; i++) {
@@ -2099,6 +2099,7 @@ if (isGame === true) {
             objGA.horiz0 = objGA.horiz;
             objGA.vertic0 = objGA.vertic;
             if (useKeyboard === true) {
+               if (objGA.runDebugger) { debugger; }
                objGA.makemoves();
             }
          }
@@ -2343,7 +2344,8 @@ if (isGame === true) {
             if (berserkButton) {
                berserkButton.click();
             }
-         } else if (key === 'p'/*  || key === '0' */) {
+         } else if (key === 'v'/*  || key === '0' */) {
+            console.log('df')
             objGA.runDebugger = true;
 
          } else if (key === objGA.PieceKeys[16]) {
@@ -2880,7 +2882,7 @@ if (isGame === true) {
                let pieceName = 'Knight', positionPieceName = 'knights', pieceNameToWorker = 'knight'
                let c = [mouseUpX, mouseUpY]
                if (multi === false) {
-                  if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                  if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
                      CurrentRightPiece = rPcoord;
                      isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
                      if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
@@ -2901,7 +2903,7 @@ if (isGame === true) {
                      isLeft = (possibles[0][0] === CurrentLeftPiece[0] && possibles[0][1] === CurrentLeftPiece[1]);
                      if (isLeft) { objGA.PositionsOfDoublePieces[positionPieceName].l = c; }
                      else { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
-                  } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                  } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
 
                      CurrentRightPiece = rPcoord;
                      isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
@@ -2938,7 +2940,7 @@ if (isGame === true) {
                let pieceName = 'Rook', positionPieceName = 'rooks', pieceNameToWorker = 'rook'
                let c = [mouseUpX, mouseUpY]
                if (multi === false) {
-                  if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                  if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
                      CurrentRightPiece = rPcoord;
                      isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
                      if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
@@ -2957,7 +2959,7 @@ if (isGame === true) {
                      isLeft = (possibles[0][0] === CurrentLeftPiece[0] && possibles[0][1] === CurrentLeftPiece[1]);
                      if (isLeft) { objGA.PositionsOfDoublePieces[positionPieceName].l = c; }
                      else { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
-                  } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `), rPcoord !== void 0) {
+                  } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`), rPcoord !== void 0) {
                      CurrentRightPiece = rPcoord;
                      isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
                      if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
@@ -2996,7 +2998,7 @@ if (isGame === true) {
                   //resolve(true)
                } else {
                   if (multi === false) {
-                     if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `, numberOfQueens), rPcoord !== void 0) {
+                     if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`, numberOfQueens), rPcoord !== void 0) {
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
                         if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
@@ -3008,7 +3010,7 @@ if (isGame === true) {
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
                         if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
                         else { objGA.PositionsOfDoublePieces[positionPieceName].l = c; }
-                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName} `, numberOfQueens), rPcoord !== void 0) {
+                     } else if (rPcoord = objGA.ifTwoPieces(`right${pieceName}`, numberOfQueens), rPcoord !== void 0) {
                         CurrentRightPiece = rPcoord;
                         isRight = (possibles[0][0] === CurrentRightPiece[0] && possibles[0][1] === CurrentRightPiece[1]);
                         if (isRight) { objGA.PositionsOfDoublePieces[positionPieceName].r = c; }
@@ -3032,7 +3034,7 @@ if (isGame === true) {
          }
       },
       makemoves(l = void 0) {
-
+         if (objGA.runDebugger === true) { debugger; }
          if (objGA.keys.length !== 0) {
             if (objGA.horiz < 9 && objGA.horiz > 0 && objGA.vertic < 9 && objGA.vertic > 0) {
 
