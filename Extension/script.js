@@ -28,7 +28,7 @@ if (isGame === true) {
    let BothClickAndDrug = false;
    let globalMultiKeyValueBeforePageLoad = false;
 
-   
+
 
    const checkMouseDownBeforePageLoaded = (e) => {
       if (e.isTrusted === true) {
@@ -575,97 +575,97 @@ if (isGame === true) {
 
 
             //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
-   if (settingsObject.handleTouchscreens === true) {
-      function touchHandler(event) {
-if (touches[0].target.tagName === "CG-BOARD") {
-         event.preventDefault();
-         event.stopImmediatePropagation();
-         event.stopPropagation();
-}
-         var touches = event.changedTouches,
-            first = touches[0],
-            type = "";
-         switch (event.type) {
-            case "touchstart": type = "mousedown"; break;
-            case "touchmove": type = "mousemove"; break;
-            case "touchend": type = "mouseup"; break;
-            default: return;
-         }
-         // initMouseEvent(type, canBubble, cancelable, view, clickCount, 
-         //                screenX, screenY, clientX, clientY, ctrlKey, 
-         //                altKey, shiftKey, metaKey, button, relatedTarget);
+            if (settingsObject.handleTouchscreens === true) {
+               function touchHandler(event) {
+                  if (touches[0].target.tagName === "CG-BOARD") {
+                     event.preventDefault();
+                     event.stopImmediatePropagation();
+                     event.stopPropagation();
+                  }
+                  var touches = event.changedTouches,
+                     first = touches[0],
+                     type = "";
+                  switch (event.type) {
+                     case "touchstart": type = "mousedown"; break;
+                     case "touchmove": type = "mousemove"; break;
+                     case "touchend": type = "mouseup"; break;
+                     default: return;
+                  }
+                  // initMouseEvent(type, canBubble, cancelable, view, clickCount, 
+                  //                screenX, screenY, clientX, clientY, ctrlKey, 
+                  //                altKey, shiftKey, metaKey, button, relatedTarget);
 
-         /* var simulatedEvent = document.createEvent("MouseEvent");
-         simulatedEvent.initMouseEvent(type, true, true, window, 1,
-            first.screenX, first.screenY,
-            first.clientX, first.clientY, false,
-            false, false, false, 0, null);
-         simulatedEvent.data = 'proceed'
-         first.target.dispatchEvent(simulatedEvent); */
-         let ev = new MouseEvent(type, {
-            "view": window,
-            "bubbles": true,
-            "cancelable": true,
-            "clientX": first.clientX,
-            "clientY": first.clientY
-         });
-         ev.data = 'proceed';
-         first.target.dispatchEvent(ev);
-      }
-      function init() {
-         let options = {capture: true, passive: false}
-        //let options = true
-         document.addEventListener("touchstart", touchHandler, options);
-         document.addEventListener("touchmove", touchHandler, options);
-         document.addEventListener("touchend", touchHandler, options);
-         document.addEventListener("touchcancel", touchHandler, options);
-      }
-      init()
-   }
-   //end code for handling touchscreens
-            
-   
-   
-   /* 
-                           let observer;            
-                           let config = {
-                              attributes: true//,childList: false//,subtree: false
-                           };
-                           observer = new MutationObserver(() => {
-                              if (document.getElementsByClassName("rclock rclock-bottom running")[0] !== undefined) {
-                                 if (doOnce === 1 && notBeginning === true && numberOfPlies > 1) {
-                                    doOnce = 0;
-                                    myMoveAccordingToObserver = true;
+                  /* var simulatedEvent = document.createEvent("MouseEvent");
+                  simulatedEvent.initMouseEvent(type, true, true, window, 1,
+                     first.screenX, first.screenY,
+                     first.clientX, first.clientY, false,
+                     false, false, false, 0, null);
+                  simulatedEvent.data = 'proceed'
+                  first.target.dispatchEvent(simulatedEvent); */
+                  let ev = new MouseEvent(type, {
+                     "view": window,
+                     "bubbles": true,
+                     "cancelable": true,
+                     "clientX": first.clientX,
+                     "clientY": first.clientY
+                  });
+                  ev.data = 'proceed';
+                  first.target.dispatchEvent(ev);
+               }
+               function init() {
+                  let options = { capture: true, passive: false }
+                  //let options = true
+                  document.addEventListener("touchstart", touchHandler, options);
+                  document.addEventListener("touchmove", touchHandler, options);
+                  document.addEventListener("touchend", touchHandler, options);
+                  document.addEventListener("touchcancel", touchHandler, options);
+               }
+               init()
+            }
+            //end code for handling touchscreens
+
+
+
+            /* 
+                                    let observer;            
+                                    let config = {
+                                       attributes: true//,childList: false//,subtree: false
+                                    };
+                                    observer = new MutationObserver(() => {
+                                       if (document.getElementsByClassName("rclock rclock-bottom running")[0] !== undefined) {
+                                          if (doOnce === 1 && notBeginning === true && numberOfPlies > 1) {
+                                             doOnce = 0;
+                                             myMoveAccordingToObserver = true;
+                                             setTimeout(() => {
+                                                objGA.setPieces(objectInComingSocket.setPieces);
+                                                objGA.whoseM(objectInComingSocket.whoseM);
+                                                objGA.moves(objectInComingSocket.moves);
+                                                objGA.inMoves = objectInComingSocket.inMoves; objGA.DoinMoves();
+                                             }, delaysBeforeSendingMoves.m);
+                     
+                                             console.log('+-----my Move Observer', performance.now())
+                                          }
+                                       } else
+                                          if (document.getElementsByClassName("rclock rclock-bottom running")[0] === undefined) {
+                                             if (doOnce === 0 && notBeginning === true && numberOfPlies > 1) {
+                                                doOnce = 1;
+                                                myMoveAccordingToObserver = false;
+                     
+                                                setTimeout(() => {
+                                                   objGA.setPieces(objectOutComingSocket.setPieces);
+                                                   objGA.whoseM(objectOutComingSocket.whoseM);
+                                                   objGA.moves(undefined);
+                                                   objGA.inMoves = {}; objGA.DoinMoves();
+                     
+                                                }, delaysBeforeSendingMoves.o);
+                     
+                                                console.log('------Opp Move Observer', performance.now())
+                                             }
+                                          }
+                                    });
                                     setTimeout(() => {
-                                       objGA.setPieces(objectInComingSocket.setPieces);
-                                       objGA.whoseM(objectInComingSocket.whoseM);
-                                       objGA.moves(objectInComingSocket.moves);
-                                       objGA.inMoves = objectInComingSocket.inMoves; objGA.DoinMoves();
-                                    }, delaysBeforeSendingMoves.m);
-            
-                                    console.log('+-----my Move Observer', performance.now())
-                                 }
-                              } else
-                                 if (document.getElementsByClassName("rclock rclock-bottom running")[0] === undefined) {
-                                    if (doOnce === 0 && notBeginning === true && numberOfPlies > 1) {
-                                       doOnce = 1;
-                                       myMoveAccordingToObserver = false;
-            
-                                       setTimeout(() => {
-                                          objGA.setPieces(objectOutComingSocket.setPieces);
-                                          objGA.whoseM(objectOutComingSocket.whoseM);
-                                          objGA.moves(undefined);
-                                          objGA.inMoves = {}; objGA.DoinMoves();
-            
-                                       }, delaysBeforeSendingMoves.o);
-            
-                                       console.log('------Opp Move Observer', performance.now())
-                                    }
-                                 }
-                           });
-                           setTimeout(() => {
-                              observer.observe(document.getElementsByClassName('rclock-bottom')[0], config); 
-                           }, 300); */
+                                       observer.observe(document.getElementsByClassName('rclock-bottom')[0], config); 
+                                    }, 300); */
 
 
 
@@ -1896,6 +1896,17 @@ if (touches[0].target.tagName === "CG-BOARD") {
                      objGA.mainPremoveHasBeenMade = false;
                      objGA.piecesStatesAfterPremoves = {};
 
+
+
+
+                     //trying to proceed with a move if premoves failed:
+                     if (useKeyboard === true && objGA.cursorOverBoard === true && objGA.stillexecute &&
+                        (objGA.horiz !== objGA.storeLastMoveX ||
+                           objGA.vertic !== objGA.storeLastMoveY)) {
+                        objGA.keysT = objGA.keys.slice(0);
+                        objGA.makemoves(123);
+                     }
+
                      /* if (useMouse === true && objGA.isAPieceSelected === true) {
                         objGA.UnselectMultiSquare()
                      } */
@@ -3083,14 +3094,14 @@ if (touches[0].target.tagName === "CG-BOARD") {
             //objGA.ApplyData(b[0],b[1]);
             objGA.DataTransition(b[0], b[1]);
          } else {
-
-            //setTimeout(function () {
+            objGA.Unselect()
+           // setTimeout(function () {
             objGA.ApplyData(a[0], a[1]);
             objGA.DataTransition(a[0], a[1]);
             objGA.ApplyData(b[0], b[1]);
             objGA.DataTransition(b[0], b[1]/* , true */);
-            //}, 0);
-            objGA.Unselect.async()
+           // }, 0);
+           // objGA.Unselect.async()
          }
 
          /*  if (BothClickAndDrug === false) {
