@@ -1444,7 +1444,7 @@ if (isGame === true) {
          objGA.pking = document.getElementsByClassName(objGA.myCol + ' king')[0];
          objGA.pqueen = document.getElementsByClassName(objGA.myCol + ' queen')[0];
          objGA.pbishop = document.getElementsByClassName(objGA.myCol + ' bishop');
-         if (objGA.pqueen !== undefined) {
+         if (useKeyboard === true && objGA.pqueen !== undefined) {
             objGA.AddRectanglesToSVG(objGA.pqueen, useUltrabulletTheme, true)
          }
       },
@@ -3089,19 +3089,20 @@ if (isGame === true) {
       DoubleData: (a, b) => {
          objGA.stillexecute = false;
          if (BothClickAndDrug === false) {
+            if (useMouse === true) { objGA.Unselect() }
             objGA.ApplyData(a[0], a[1]);
             //objGA.DataTransition(a[0],a[1]);
             //objGA.ApplyData(b[0],b[1]);
             objGA.DataTransition(b[0], b[1]);
          } else {
             objGA.Unselect()
-           // setTimeout(function () {
+            // setTimeout(function () {
             objGA.ApplyData(a[0], a[1]);
             objGA.DataTransition(a[0], a[1]);
             objGA.ApplyData(b[0], b[1]);
             objGA.DataTransition(b[0], b[1]/* , true */);
-           // }, 0);
-           // objGA.Unselect.async()
+            // }, 0);
+            // objGA.Unselect.async()
          }
 
          /*  if (BothClickAndDrug === false) {
