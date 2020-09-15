@@ -28,53 +28,7 @@ if (isGame === true) {
    let BothClickAndDrug = false;
    let globalMultiKeyValueBeforePageLoad = false;
 
-   //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
-   if (settingsObject.handleTouchscreens === true) {
-      function touchHandler(event) {
-         event.preventDefault();
-         event.stopImmediatePropagation();
-         event.stopPropagation();
-         var touches = event.changedTouches,
-            first = touches[0],
-            type = "";
-         switch (event.type) {
-            case "touchstart": type = "mousedown"; break;
-            case "touchmove": type = "mousemove"; break;
-            case "touchend": type = "mouseup"; break;
-            default: return;
-         }
-         // initMouseEvent(type, canBubble, cancelable, view, clickCount, 
-         //                screenX, screenY, clientX, clientY, ctrlKey, 
-         //                altKey, shiftKey, metaKey, button, relatedTarget);
-
-         /* var simulatedEvent = document.createEvent("MouseEvent");
-         simulatedEvent.initMouseEvent(type, true, true, window, 1,
-            first.screenX, first.screenY,
-            first.clientX, first.clientY, false,
-            false, false, false, 0, null);
-         simulatedEvent.data = 'proceed'
-         first.target.dispatchEvent(simulatedEvent); */
-         let ev = new MouseEvent(type, {
-            "view": window,
-            "bubbles": true,
-            "cancelable": true,
-            "clientX": first.clientX,
-            "clientY": first.clientY
-         });
-         ev.data = 'proceed';
-         first.target.dispatchEvent(ev);
-      }
-      function init() {
-         let options = {capture: true, passive: false}
-        //let options = true
-         document.addEventListener("touchstart", touchHandler, options);
-         document.addEventListener("touchmove", touchHandler, options);
-         document.addEventListener("touchend", touchHandler, options);
-         document.addEventListener("touchcancel", touchHandler, options);
-      }
-      init()
-   }
-   //end code for handling touchscreens
+   
 
    const checkMouseDownBeforePageLoaded = (e) => {
       if (e.isTrusted === true) {
@@ -618,7 +572,59 @@ if (isGame === true) {
                   }
                }, 500);
             }
-            /* 
+
+
+            //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
+   if (settingsObject.handleTouchscreens === true) {
+      function touchHandler(event) {
+         event.preventDefault();
+         event.stopImmediatePropagation();
+         event.stopPropagation();
+         var touches = event.changedTouches,
+            first = touches[0],
+            type = "";
+         switch (event.type) {
+            case "touchstart": type = "mousedown"; break;
+            case "touchmove": type = "mousemove"; break;
+            case "touchend": type = "mouseup"; break;
+            default: return;
+         }
+         // initMouseEvent(type, canBubble, cancelable, view, clickCount, 
+         //                screenX, screenY, clientX, clientY, ctrlKey, 
+         //                altKey, shiftKey, metaKey, button, relatedTarget);
+
+         /* var simulatedEvent = document.createEvent("MouseEvent");
+         simulatedEvent.initMouseEvent(type, true, true, window, 1,
+            first.screenX, first.screenY,
+            first.clientX, first.clientY, false,
+            false, false, false, 0, null);
+         simulatedEvent.data = 'proceed'
+         first.target.dispatchEvent(simulatedEvent); */
+         let ev = new MouseEvent(type, {
+            "view": window,
+            "bubbles": true,
+            "cancelable": true,
+            "clientX": first.clientX,
+            "clientY": first.clientY
+         });
+         ev.data = 'proceed';
+         first.target.dispatchEvent(ev);
+      }
+      function init() {
+         let options = {capture: true, passive: false}
+        //let options = true
+         document.addEventListener("touchstart", touchHandler, options);
+         document.addEventListener("touchmove", touchHandler, options);
+         document.addEventListener("touchend", touchHandler, options);
+         document.addEventListener("touchcancel", touchHandler, options);
+      }
+      init()
+   }
+   //end code for handling touchscreens
+            
+   
+   
+   /* 
                            let observer;            
                            let config = {
                               attributes: true//,childList: false//,subtree: false
