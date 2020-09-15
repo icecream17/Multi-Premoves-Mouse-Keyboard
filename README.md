@@ -2,7 +2,7 @@
  Creating unlimited multiple premoves compatible with all Lichess styles of playing (keyboard, mouse, touchscreen)
  
 # Important:
-- To install, download the extension (the extension is in the "Extension" folder) and load as an unpacked extension in Chrome (enable developer mode). If you have troubles, google "install unpacked extension chrome".
+- To install, download the extension (the extension is in the "Extension" folder) and load as an unpacked extension in any Chromium browser (enable developer mode). If you have troubles, google "install unpacked extension chrome".
 - To access the settings, click the extension's icon (pin it if necessary)
 - The option 'How do you move pieces' (https://lichess.org/account/preferences/game-behavior) should be set to either 'drag' or 'both'. Using 'drag' should be more reliable. If you use kb only and have any problems with moves, try switching to 'drag' as well. 
 - For now it only supports autoqueen (and possibly autoqueen on premoves as well). If you promote to something else it might break. https://lichess.org/account/preferences/game-behavior
