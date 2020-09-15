@@ -163,7 +163,7 @@ display: ${settingsObject.buttonsAdvanced === true ? 'block' : 'none'};
 }
 
 #keyboardKeys {
-display: ${settingsObject.useKeyboard === true ? 'block' : 'none'}
+display: ${settingsObject.useKeyboard === true ? 'block' : 'none'};
 border: solid 1px;
 }
 
