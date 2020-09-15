@@ -577,9 +577,11 @@ if (isGame === true) {
             //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
    if (settingsObject.handleTouchscreens === true) {
       function touchHandler(event) {
+if (touches[0].target.tagName === "CG-BOARD") {
          event.preventDefault();
          event.stopImmediatePropagation();
          event.stopPropagation();
+}
          var touches = event.changedTouches,
             first = touches[0],
             type = "";
