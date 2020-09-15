@@ -1778,7 +1778,8 @@ if (isGame === true) {
             objGA.arrayOfPremoves.splice(0, 1)
 
          } else {
-            objGA.arrayOfPremoves = [];
+            //objGA.arrayOfPremoves = [];
+            objGA.arrayOfPremoves.length = 0;
             window.postMessage({
                type: 'deleteAll'
             }, "*");
@@ -1791,6 +1792,15 @@ if (isGame === true) {
             objGA.multiPremState = false;
             objGA.mainPremoveHasBeenMade = false;
             objGA.piecesStatesAfterPremoves = {};
+
+
+            //trying to proceed with a move if a multipremove failed:
+            if (useKeyboard === true && objGA.cursorOverBoard === true && objGA.stillexecute &&
+               (objGA.horiz !== objGA.storeLastMoveX ||
+                  objGA.vertic !== objGA.storeLastMoveY)) {
+               objGA.keysT = objGA.keys.slice(0);
+               objGA.makemoves(123);
+            }
 
             /* if (useMouse === true && objGA.isAPieceSelected === true) {
                objGA.UnselectMultiSquare()
