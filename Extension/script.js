@@ -2247,6 +2247,20 @@ if (isGame === true) {
       arrayOfPremoves: [],
       mainPremoveHasBeenMade: false,
       piecesStatesAfterPremoves: {},
+      resetBoard: () => {
+         let allBoards = document.getElementsByTagName('cg-board');
+         let cgBoardNow = allBoards[0];
+         if (cgBoardNow !== objGA.board && allBoards.length !== 2) {
+            objGA.board = cgBoardNow;
+            objGA.board.removeEventListener(moveEvent, objGA.MouseMoves);
+            objGA.board.addEventListener(moveEvent, objGA.MouseMoves);
+            objGA.board.removeEventListener('mouseover', objGA.mouseOver)
+            objGA.board.removeEventListener('mouseout', objGA.mouseOut)
+            objGA.board.addEventListener('mouseover', objGA.mouseOver)
+            objGA.board.addEventListener('mouseout', objGA.mouseOut)
+         }
+         objGA.checkIfTheBoardIsTheSameAtTheBeginning = false;
+      },
 
       KeyD(e) {
          //e.preventDefault();
@@ -2259,17 +2273,7 @@ if (isGame === true) {
                e.preventDefault();
                e.stopImmediatePropagation();
                if (objGA.checkIfTheBoardIsTheSameAtTheBeginning === true) {
-                  let cgBoardNow = document.getElementsByTagName('cg-board')[0];
-                  if (cgBoardNow !== objGA.board) {
-                     objGA.board = cgBoardNow;
-                     objGA.board.removeEventListener(moveEvent, objGA.MouseMoves);
-                     objGA.board.addEventListener(moveEvent, objGA.MouseMoves);
-                     objGA.board.removeEventListener('mouseover', objGA.mouseOver)
-                     objGA.board.removeEventListener('mouseout', objGA.mouseOut)
-                     objGA.board.addEventListener('mouseover', objGA.mouseOver)
-                     objGA.board.addEventListener('mouseout', objGA.mouseOut)
-                  }
-                  objGA.checkIfTheBoardIsTheSameAtTheBeginning = false;
+                  objGA.resetBoard()
                }
 
                objGA.keys.unshift(key);
@@ -2473,21 +2477,8 @@ if (isGame === true) {
          if (useMouse === true && (e.isTrusted === true || e.data === 'proceed') && e.which === 1) {
             // console.log('down')
             if (objGA.checkIfTheBoardIsTheSameAtTheBeginning === true) {
-               let cgBoardNow = document.getElementsByTagName('cg-board')[0];
-               if (cgBoardNow !== objGA.board) {
-                  objGA.board = cgBoardNow;
-                  objGA.board.removeEventListener(moveEvent, objGA.MouseMoves);
-                  objGA.board.addEventListener(moveEvent, objGA.MouseMoves);
-                  objGA.board.removeEventListener('mouseover', objGA.mouseOver)
-                  objGA.board.removeEventListener('mouseout', objGA.mouseOut)
-                  objGA.board.addEventListener('mouseover', objGA.mouseOver)
-                  objGA.board.addEventListener('mouseout', objGA.mouseOut)
-               }
-               objGA.checkIfTheBoardIsTheSameAtTheBeginning = false;
+               objGA.resetBoard()
             }
-
-
-
             if (objGA.multiPremState === true && e.target.tagName === 'CG-BOARD') {
                if (objGA.multiPremKeyPressed === true) {
                   e.preventDefault();
