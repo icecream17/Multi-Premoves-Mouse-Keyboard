@@ -35,5 +35,5 @@ let settingsObject = {
    detectPrevKB: true,
    experimentalArrows: true,
    inMoveDelay: 0,
-   outMoveDelay: 15
+   outMoveDelay: 30
 }

@@ -2,7 +2,10 @@ if (settingsObject.createUI === true) {
     const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
     let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
     for (const key in multiPremoveSettings) {
-        settingsObject[key] = multiPremoveSettings[key]
+        if (!['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB'].includes(key)) {
+            settingsObject[key] = multiPremoveSettings[key]
+        }
+        //settingsObject[key] = multiPremoveSettings[key]
     }
 }
 
@@ -97,7 +100,7 @@ window.expArrowFunction = () => {
             this.remove();
         };
 
-        
+
         /* jquery.src = chrome.runtime.getURL('jquery-3.5.1.slim.min.js');
         jquery.onload = function () {
             this.remove();
@@ -265,18 +268,18 @@ window.expArrowFunction = () => {
                 canvas.style.opacity = 0.7;
                 if (useUltrabulletTheme === true) {
                     canvas.style.opacity = 1;
-                    if (experimentalArrows === false) {
-                        opacity = 0.8;
+                    //if (experimentalArrows === false) {
+                    opacity = 0.8;
+                    //}
+                    window.pieceColors = {
+                        pawn: "180, 180, 180",
+                        knight: "71, 159, 25",
+                        bishop: "231, 241, 35",
+                        rook: "148, 21, 177",
+                        queen: "22, 239, 239",
+                        king: "0, 0, 0"
                     }
-                        window.pieceColors = {
-                            pawn: "180, 180, 180",
-                            knight: "71, 159, 25",
-                            bishop: "231, 241, 35",
-                            rook: "148, 21, 177",
-                            queen: "22, 239, 239",
-                            king: "0, 0, 0"
-                        }
-                    
+
                 } else {
                     window.pieceColors = {
                         pawn: "180, 180, 180",
