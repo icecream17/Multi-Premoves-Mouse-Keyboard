@@ -800,7 +800,7 @@ if (isGame === true) {
                if (possibles.length > 0) {
                   resolve(true)
                   if (possibles.length > 1) {
-                     objGA.executeMove(c, [c[0], 2], false, multi, true, "pawn");
+                     objGA.executeMove(c, [c[0], 3], false, multi, true, "pawn");
                   } else if
                      (possibles.length === 1) {
                      objGA.executeMove(c, possibles[0], false, multi, true, "pawn");
