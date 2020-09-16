@@ -11,4 +11,4 @@
 - Right mouse button is currently the default button to activate multi premoves. When it's pressed you can input multiple premoves. Or you can click the red circle below the board (it will change to green when multipremove input is activated). You can change the key in the settings.
 - Currently after resizing the window or changing the board size, the page should be reloaded. 
 - If you use kb extension, disable the other kb extension and activate 'Use keyboard' in the settings. There you can set the keys, and now a key for a second queen is available (last promoted queen becomes the second queen for the extension. When there are more than two queen, the extension should move the last promoted queen when the key for a second queen is pressed or a random queen out of the rest available for a move). 
-- Other options such as 'auto berserk back' are available. And other configurations.
+- Other options: auto berserk back, rematch, berserk, resign, back to the tournament buttons, second queen key for keyboard. 
