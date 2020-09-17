@@ -1795,9 +1795,9 @@ if (isGame === true) {
 
 
             //trying to proceed with a move if a multipremove failed:
-            if (useKeyboard === true && objGA.cursorOverBoard === true && objGA.stillexecute &&
+            if (useKeyboard === true && objGA.cursorOverBoard === true && objGA.stillexecute/*  &&
                (objGA.horiz !== objGA.storeLastMoveX ||
-                  objGA.vertic !== objGA.storeLastMoveY)) {
+                  objGA.vertic !== objGA.storeLastMoveY) */) {
                objGA.keysT = objGA.keys.slice(0);
                objGA.makemoves(123);
             }
@@ -1910,9 +1910,9 @@ if (isGame === true) {
 
 
                      //trying to proceed with a move if premoves failed:
-                     if (useKeyboard === true && objGA.cursorOverBoard === true && objGA.stillexecute &&
+                     if (useKeyboard === true && objGA.cursorOverBoard === true && objGA.stillexecute/*  &&
                         (objGA.horiz !== objGA.storeLastMoveX ||
-                           objGA.vertic !== objGA.storeLastMoveY)) {
+                           objGA.vertic !== objGA.storeLastMoveY) */) {
                         objGA.keysT = objGA.keys.slice(0);
                         objGA.makemoves(123);
                      }
@@ -1960,9 +1960,9 @@ if (isGame === true) {
                objGA.mainPremoveHasBeenMade = false;
                objGA.piecesStatesAfterPremoves = {};
 
-               if (objGA.cursorOverBoard === true && objGA.stillexecute &&
+               if (objGA.cursorOverBoard === true && objGA.stillexecute/*  &&
                   (objGA.horiz !== objGA.storeLastMoveX ||
-                     objGA.vertic !== objGA.storeLastMoveY)) {
+                     objGA.vertic !== objGA.storeLastMoveY) */) {
                   objGA.keysT = objGA.keys.slice(0);
                   if (useKeyboard === true) {
                      objGA.makemoves(123);
