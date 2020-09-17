@@ -149,21 +149,20 @@ if (isGame === true) {
 
 
       let initialTimeForBerserk;
-      const berserkFunction = (info) => {
-         //console.log(info)
-         let data = info.data;
-         if (data.length > 1) {
-            let parsed = JSON.parse(data);
-            if (parsed.t === "clockInc" && -parsed.d.time * 2 === initialTimeForBerserk && parsed.d.color !== myColor) {
-               let berserkButton = document.getElementsByClassName("fbt go-berserk")[0];
-               if (berserkButton) {
-                  berserkButton.click();
-               }
-
-            }
-         }
-
-      }
+      /*     const berserkFunction = (info) => {
+             //console.log(info)
+             let data = info.data;
+             if (data.length > 1) {
+                let parsed = JSON.parse(data);
+                if (parsed.t === "clockInc" && -parsed.d.time * 2 === initialTimeForBerserk && parsed.d.color !== myColor) {
+                   let berserkButton = document.getElementsByClassName("fbt go-berserk")[0];
+                   if (berserkButton) {
+                      berserkButton.click();
+                   }
+    
+                }
+             }
+          } */
 
 
       (function () { //to get the move that has been sent by the client, https://stackoverflow.com/a/31182643/10364842
@@ -185,10 +184,9 @@ if (isGame === true) {
             }
             wsAddListener(ws, 'message', function (event) {
                // TODO: Do something with event.data (received data) if you wish.
-               //console.log(ws,event)
-               if (berserkBack) {
-                  berserkFunction.async(event)
-               }
+               //console.log(event)
+               checkWebSocketMessage(event)
+
                //consoleNew(event.data, performance.now() - timeStampToMeasureWebSocket)
             });
             return ws;
@@ -380,6 +378,23 @@ if (isGame === true) {
 
       }
 
+      const checkWebSocketMessage = (info) => {
+         let data = info.data;
+         if (data.length > 1) {
+            let parsed = JSON.parse(data);
+            if (parsed.t === "move") {
+               //console.log('e')
+               incomingMove(parsed.d);
+            } else
+               if (parsed.t === "clockInc" && berserkBack === true && -parsed.d.time * 2 === initialTimeForBerserk && parsed.d.color !== myColor) {
+                  let berserkButton = document.getElementsByClassName("fbt go-berserk")[0];
+                  if (berserkButton) {
+                     berserkButton.click();
+                  }
+               }
+         }
+      }
+
       const convertToPieceObject = (board) => {
          let pieceObject = {};
          for (let i = 0; i < board.length; i++) {
@@ -475,13 +490,13 @@ if (isGame === true) {
 
 
             //window.lichess.pubsub.on('socket.in.move', d => incomingMove.async(d));
-            if (window.lichess.pubsub !== undefined) {
-               window.lichess.pubsub.on('socket.in.move', d => incomingMove(d));
-            } else {
-               setTimeout(() => {
-                  window.lichess.pubsub.on('socket.in.move', d => incomingMove(d));
-               }, 200);
-            }
+            /*  if (window.lichess.pubsub !== undefined) {
+                window.lichess.pubsub.on('socket.in.move', d => incomingMove(d));
+             } else {
+                setTimeout(() => {
+                   window.lichess.pubsub.on('socket.in.move', d => incomingMove(d));
+                }, 200);
+             } */
 
             objGA.setBoard();
             objGA.setKeys();
@@ -669,7 +684,8 @@ if (isGame === true) {
 
 
 
-
+            let chatEl = document.getElementsByClassName('mchat__say')[0];
+            if (chatEl) { chatEl.blur() }
          }
          // })
 
@@ -2321,10 +2337,10 @@ if (isGame === true) {
             objGA.piecesStatesAfterPremoves = {};
             /* objGA.DoubleData([5, 5], [5, 5]);
             objGA.DoubleData([5, 5], [5, 5]); */
-            objGA.ApplyData([5, 5], [5, 5]);
-            objGA.DataTransition([5, 5], [5, 5]);
-            objGA.ApplyData([5, 5], [5, 5]);
-            objGA.DataTransition([5, 5], [5, 5]);
+            objGA.ApplyData(15, 15);
+            objGA.DataTransition(15, 15);
+            objGA.ApplyData(15, 15);
+            objGA.DataTransition(15, 15);
 
             if (useMouse === true && objGA.isAPieceSelected === true) {
                objGA.UnselectMultiSquare()
