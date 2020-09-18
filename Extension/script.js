@@ -312,37 +312,38 @@ if (isGame === true) {
             }, "*");
             ++numberOfPlies;
             whoseMove = d.ply % 2 === 0 ? "white" : "black";
-            let fromToArr = [d.uci.substr(0, 2), d.uci.substr(2, 2)]
-            if ((fromToArr[1][1] === '8' || fromToArr[1][1] === '1') && currentPieceSet[fromToArr[0]] !== undefined && currentPieceSet[fromToArr[0]].role === 'pawn') {
-               // console.log('promotion-in', d)
-               let indexOfEqualSign = d.san.indexOf('=')
-               let promotedTo = d.san[indexOfEqualSign + 1].toLowerCase();
-               chess.move({ from: fromToArr[0], to: fromToArr[1], promotion: promotedTo })
-            } else {
+            /* console.log(numberOfPlies, d.ply) */
+            console.log(d)
+            if (numberOfPlies === d.ply) {
+               let fromToArr = [d.uci.substr(0, 2), d.uci.substr(2, 2)]
+               if ((fromToArr[1][1] === '8' || fromToArr[1][1] === '1') && currentPieceSet[fromToArr[0]] !== undefined && currentPieceSet[fromToArr[0]].role === 'pawn') {
+                  let indexOfEqualSign = d.san.indexOf('=')
+                  let promotedTo = d.san[indexOfEqualSign + 1].toLowerCase();
+                  chess.move({ from: fromToArr[0], to: fromToArr[1], promotion: promotedTo })
+               } else {
+                  if (currentPieceSet[fromToArr[0]].role === 'king' && ((fromToArr[0] === 'e1') || (fromToArr[0] === 'e8'))) {
+                     switch (fromToArr[1]) {
+                        case 'a1':
+                           fromToArr[1] = 'c1'
+                           break;
+                        case 'h1':
+                           fromToArr[1] = 'g1'
+                           break;
+                        case 'a8':
+                           fromToArr[1] = 'c8'
+                           break;
+                        case 'h8':
+                           fromToArr[1] = 'g8'
+                           break;
 
-               //if (currentPieceSet[fromToArr[0]] === undefined) { debugger; }
-               if (currentPieceSet[fromToArr[0]].role === 'king' && ((fromToArr[0] === 'e1') || (fromToArr[0] === 'e8'))) {
-                  switch (fromToArr[1]) {
-                     case 'a1':
-                        fromToArr[1] = 'c1'
-                        break;
-                     case 'h1':
-                        fromToArr[1] = 'g1'
-                        break;
-                     case 'a8':
-                        fromToArr[1] = 'c8'
-                        break;
-                     case 'h8':
-                        fromToArr[1] = 'g8'
-                        break;
-
-                     default:
-                        break;
+                        default:
+                           break;
+                     }
                   }
+                  chess.move({ from: fromToArr[0], to: fromToArr[1] })
                }
-
-               chess.move({ from: fromToArr[0], to: fromToArr[1] })
-
+            } else {
+               chess = new Chess(d.fen + ' w KQkq - 0 1')
             }
 
 
