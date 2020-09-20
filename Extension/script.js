@@ -330,7 +330,7 @@ if (isGame === true) {
             ++numberOfPlies;
             whoseMove = d.ply % 2 === 0 ? "white" : "black";
             /* console.log(numberOfPlies, d.ply) */
-            console.log(d)
+          //  console.log(d)
             if (numberOfPlies === d.ply) {
                let fromToArr = [d.uci.substr(0, 2), d.uci.substr(2, 2)]
                if ((fromToArr[1][1] === '8' || fromToArr[1][1] === '1') && currentPieceSet[fromToArr[0]] !== undefined && currentPieceSet[fromToArr[0]].role === 'pawn') {
@@ -2302,7 +2302,7 @@ if (isGame === true) {
 
 
       KeyP(e) {
-         if (useKeyboard === true/*  && e.target.tagName !== "INPUT" */) {
+         if (useKeyboard === true && e.keyCode !== 13/*  && e.target.tagName !== "INPUT" */) {
             e.stopPropagation(); e.stopImmediatePropagation();
          } else if (useMouse === true) {
             let key = e.key;
