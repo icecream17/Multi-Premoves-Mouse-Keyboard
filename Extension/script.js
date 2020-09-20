@@ -2326,7 +2326,7 @@ if (isGame === true) {
             }
          }
          if (e.target.tagName !== "INPUT") {
-            if (useKeyboard === true && e.isTrusted === true) {
+            if (useKeyboard === true/*  && e.isTrusted === true */) {
                /* if ((e.ctrlKey === true || e.altKey === true || key === 'f' || key === 's' || key === 'z' || key === 'g' || key === 'h' || key === 'y')) { e.preventDefault();e.stopPropagation();e.stopImmediatePropagation(); } */
                if (!objGA.keys.includes(key) && objGA.OnlyPieceKeys.indexOf(key) !== -1) {
                   if (objGA.checkIfTheBoardIsTheSameAtTheBeginning === true) {
