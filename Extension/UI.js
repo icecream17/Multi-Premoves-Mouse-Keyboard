@@ -20,6 +20,10 @@ if (settingsObject.createUI === true) {
 
             let settingsUnchanged = JSON.parse(response.settings);
             let settingsObject = JSON.parse(response.settings);
+            let convertCyrillic = settingsObject.convertCyrillic
+            let CyrillicToLatin = {
+               ".": "/", а: "f", б: ",", в: "d", г: "u", д: "l", е: "t", ж: ";", з: "p", и: "b", й: "q", к: "r", л: "k", м: "v", н: "y", о: "j", п: "g", р: "h", с: "c", т: "n", у: "e", ф: "a", х: "[", ц: "w", ч: "x", ш: "i", щ: "o", ъ: "]", ы: "s", ь: "m", э: "'", ю: ".", я: "z"
+            }
 
             let UiObject = {
                basic: {
@@ -310,7 +314,12 @@ transition: all 0.2s;
                   shadowDom.addEventListener('keydown', (e) => {
                      if (e.target.tagName === "INPUT") {
                         let key = e.key;
-                        if (key.length === 1) { key = key.toLowerCase(); }
+                        if (key.length === 1) {
+                           key = key.toLowerCase();
+                           if (convertCyrillic === true && CyrillicToLatin[key] !== undefined) {
+                              key = CyrillicToLatin[key];
+                           }
+                        }
                         if (key !== 'Backspace') {
                            e.target.value = key;
                         } else {

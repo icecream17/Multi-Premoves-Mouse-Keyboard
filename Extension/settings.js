@@ -35,5 +35,6 @@ let settingsObject = {
    detectPrevKB: true,
    experimentalArrows: true,
    inMoveDelay: 0,
-   outMoveDelay: 30
+   outMoveDelay: 30,
+   convertCyrillic: true
 }

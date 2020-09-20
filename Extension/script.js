@@ -23,12 +23,15 @@ if (isGame === true) {
    let upEvent = settingsObject.upEvent
    let moveEvent = settingsObject.moveEvent
    let createIndicator = settingsObject.createIndicator
+   let convertCyrillic = settingsObject.convertCyrillic
    //end of settings variables
 
    let BothClickAndDrug = false;
    let globalMultiKeyValueBeforePageLoad = false;
 
-
+   let CyrillicToLatin = {
+      ".": "/", а: "f", б: ",", в: "d", г: "u", д: "l", е: "t", ж: ";", з: "p", и: "b", й: "q", к: "r", л: "k", м: "v", н: "y", о: "j", п: "g", р: "h", с: "c", т: "n", у: "e", ф: "a", х: "[", ц: "w", ч: "x", ш: "i", щ: "o", ъ: "]", ы: "s", ь: "m", э: "'", ю: ".", я: "z"
+   }
 
    const checkMouseDownBeforePageLoaded = (e) => {
       if (e.isTrusted === true) {
@@ -67,14 +70,24 @@ if (isGame === true) {
    }
    const checkKeyDownBeforePageLoaded = (e) => {
       let key = e.key;
-      if (key.length === 1) { key = key.toLowerCase() }
+      if (key.length === 1) {
+         key = key.toLowerCase();
+         if (convertCyrillic === true && CyrillicToLatin[key] !== undefined) {
+            key = CyrillicToLatin[key];
+         }
+      }
       if (key === settingsObject.multipremove) {
          globalMultiKeyValueBeforePageLoad = true;
       }
    }
    const checkKeyUpBeforePageLoaded = (e) => {
       let key = e.key;
-      if (key.length === 1) { key = key.toLowerCase() }
+      if (key.length === 1) {
+         key = key.toLowerCase();
+         if (convertCyrillic === true && CyrillicToLatin[key] !== undefined) {
+            key = CyrillicToLatin[key];
+         }
+      }
       if (key === settingsObject.multipremove) {
          globalMultiKeyValueBeforePageLoad = false;
       }
@@ -138,6 +151,8 @@ if (isGame === true) {
          'e8g8': 'e8h8',
          'e8c8': 'e8a8'
       }
+
+
       let LastPieceThatMoved;
 
       let objectOutComingSocket = {};
@@ -2289,7 +2304,13 @@ if (isGame === true) {
             e.stopPropagation(); e.stopImmediatePropagation();
          } else if (useMouse === true) {
             let key = e.key;
-            if (key.length === 1) { key = key.toLowerCase() }
+            if (key.length === 1) {
+               key = key.toLowerCase()
+               if (convertCyrillic === true && CyrillicToLatin[key] !== undefined) {
+                  key = CyrillicToLatin[key];
+               }
+            }
+
             if (objGA.UsedKeys.includes(e.key)) {
                e.stopPropagation(); e.stopImmediatePropagation();
             }
@@ -2298,7 +2319,12 @@ if (isGame === true) {
       KeyD(e) {
          //e.preventDefault();
          let key = e.key;
-         if (key.length === 1) { key = key.toLowerCase() }
+         if (key.length === 1) {
+            key = key.toLowerCase()
+            if (convertCyrillic === true && CyrillicToLatin[key] !== undefined) {
+               key = CyrillicToLatin[key];
+            }
+         }
          if (e.target.tagName !== "INPUT") {
             if (useKeyboard === true && e.isTrusted === true) {
                /* if ((e.ctrlKey === true || e.altKey === true || key === 'f' || key === 's' || key === 'z' || key === 'g' || key === 'h' || key === 'y')) { e.preventDefault();e.stopPropagation();e.stopImmediatePropagation(); } */
@@ -2376,7 +2402,12 @@ if (isGame === true) {
 
       KeyU(e) {
          let key = e.key;
-         if (key.length === 1) { key = key.toLowerCase() }
+         if (key.length === 1) {
+            key = key.toLowerCase()
+            if (convertCyrillic === true && CyrillicToLatin[key] !== undefined) {
+               key = CyrillicToLatin[key];
+            }
+         }
          if (useKeyboard === true) {
             if (objGA.OnlyPieceKeys.indexOf(key) !== -1) {
                e.preventDefault();
