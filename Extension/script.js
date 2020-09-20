@@ -743,6 +743,9 @@ if (isGame === true) {
             c: objGA.PieceKeys[12]
          }
          objGA.OnlyPieceKeys = objGA.PieceKeys.slice(0, 11)
+         if (useMouse === true) {
+            objGA.UsedKeys = objGA.PieceKeys.slice(11)
+         }
          //console.log(objGA.PieceNames);
       },
       ////console.log(objGA.PieceNames),
@@ -2212,6 +2215,7 @@ if (isGame === true) {
          objGA.board.addEventListener('mouseover', objGA.mouseOver)
          objGA.board.addEventListener('mouseout', objGA.mouseOut)
 
+         document.addEventListener('keypress', objGA.KeyP, true);
          document.addEventListener('keydown', objGA.KeyD, true);
          document.addEventListener('keyup', objGA.KeyU, true);
          document.addEventListener(downEvent, objGA.MouseDown, true);
@@ -2279,55 +2283,53 @@ if (isGame === true) {
          objGA.checkIfTheBoardIsTheSameAtTheBeginning = false;
       },
 
+
+      KeyP(e) {
+         if (useKeyboard === true/*  && e.target.tagName !== "INPUT" */) {
+            e.stopPropagation(); e.stopImmediatePropagation();
+         } else if (useMouse === true) {
+            let key = e.key;
+            if (key.length === 1) { key = key.toLowerCase() }
+            if (objGA.UsedKeys.includes(e.key)) {
+               e.stopPropagation(); e.stopImmediatePropagation();
+            }
+         }
+      },
       KeyD(e) {
          //e.preventDefault();
          let key = e.key;
          if (key.length === 1) { key = key.toLowerCase() }
-         /* if (e.target.id !== 'shadowHostId') { */
-         if (useKeyboard === true && e.target.tagName !== "INPUT") {
-            if ((e.ctrlKey === true || e.altKey === true || key === 'f' || key === 's' || key === 'z' || key === 'g' || key === 'h' || key === 'y')) { e.preventDefault();/*e.stopPropagation();*/ }
-            if (!objGA.keys.includes(key) && objGA.OnlyPieceKeys.indexOf(key) !== -1) {
-               e.preventDefault();
-               e.stopImmediatePropagation();
-               if (objGA.checkIfTheBoardIsTheSameAtTheBeginning === true) {
-                  objGA.resetBoard()
+         if (e.target.tagName !== "INPUT") {
+            if (useKeyboard === true && e.isTrusted === true) {
+               /* if ((e.ctrlKey === true || e.altKey === true || key === 'f' || key === 's' || key === 'z' || key === 'g' || key === 'h' || key === 'y')) { e.preventDefault();e.stopPropagation();e.stopImmediatePropagation(); } */
+               if (!objGA.keys.includes(key) && objGA.OnlyPieceKeys.indexOf(key) !== -1) {
+                  if (objGA.checkIfTheBoardIsTheSameAtTheBeginning === true) {
+                     objGA.resetBoard()
+                  }
+                  objGA.keys.unshift(key);
+                  objGA.keysT.unshift(key);
+                  if (objGA.cursorOverBoard === true) {
+                     objGA.makemoves();
+                  }
+                  objGA.setHighlights(key, true);
                }
-
-               objGA.keys.unshift(key);
-               objGA.keysT.unshift(key);
-               if (objGA.cursorOverBoard === true) {
-                  objGA.makemoves();
-               }
-               objGA.setHighlights(key, true);
             }
+            objGA.CheckKeysPressed(key);
          }
-         /* } */ /* else {
-            let refEvent = e;
-            refEvent.cancelBubble = false;
-            refEvent.defaultPrevented = false;
-            refEvent.returnValue = true;
+      },
 
-            if (event.target.dispatchEvent) {
-               e.target.dispatchEvent(refEvent);
-            } else if (e.target.fireEvent) {
-               e.target.fireEvent(refEvent);
-            }
-         } */
-
-
-         if (event.key === settingsObject.multipremove) {
+      CheckKeysPressed: (key) => {
+         if (key === settingsObject.multipremove) {
             objGA.multiPremKeyPressed = true;
-
             if (createIndicator === true && objGA.indicator !== undefined) {
                objGA.indicator.style.background = '#114811'
             }
          }
-         else if (event.key === settingsObject.cancelPremoves) {
+         else if (key === settingsObject.cancelPremoves) {
             objGA.arrayOfPremoves = [];
             window.postMessage({
                type: 'deleteAll'
             }, "*");
-
             for (let key in objGA.PositionsOfDoublePieces) {
                objGA.PositionsOfDoublePieces[key].l = void 0;
                objGA.PositionsOfDoublePieces[key].r = void 0;
@@ -2336,17 +2338,13 @@ if (isGame === true) {
             objGA.multiPremState = false;
             objGA.mainPremoveHasBeenMade = false;
             objGA.piecesStatesAfterPremoves = {};
-            /* objGA.DoubleData([5, 5], [5, 5]);
-            objGA.DoubleData([5, 5], [5, 5]); */
             objGA.ApplyData(15, 15);
             objGA.DataTransition(15, 15);
             objGA.ApplyData(15, 15);
             objGA.DataTransition(15, 15);
-
             if (useMouse === true && objGA.isAPieceSelected === true) {
                objGA.UnselectMultiSquare()
             }
-
          }
          else if (key === objGA.PieceKeys[13]) {
             let rematchButton = document.getElementsByClassName('fbt rematch white')[0];
@@ -2365,28 +2363,20 @@ if (isGame === true) {
             if (berserkButton) {
                berserkButton.click();
             }
-         } else if (key === 'v'/*  || key === '0' */) {
-            console.log('df')
-            objGA.runDebugger = true;
-
          } else if (key === objGA.PieceKeys[16]) {
             let returnToTournament = document.getElementsByClassName("text fbt strong glowing")[0];
             if (returnToTournament) {
                returnToTournament.click();
             }
-
+         } else if (key === 'v') {
+            console.log('df')
+            objGA.runDebugger = true;
          }
-
-
-
-
-
-
       },
+
       KeyU(e) {
          let key = e.key;
          if (key.length === 1) { key = key.toLowerCase() }
-
          if (useKeyboard === true) {
             if (objGA.OnlyPieceKeys.indexOf(key) !== -1) {
                e.preventDefault();
@@ -2403,12 +2393,10 @@ if (isGame === true) {
                   }
                }
                objGA.setHighlights(key, false);
-
             }
          }
          if (event.key === objGA.multiKeys.m) {
             objGA.multiPremKeyPressed = false;
-
             if (createIndicator === true && objGA.indicator !== undefined) {
                objGA.indicator.style.background = '#35290e'
             }
@@ -2420,7 +2408,6 @@ if (isGame === true) {
          return new Promise((resolve, reject) => {
             let lastMoveWithALetterFrom;
             let lastMoveWithALetterTo;
-
             let objectWithLegalMoves = objGA.inMoves;
             if (objGA.myCol === "white") {
                lastMoveWithALetterFrom =
@@ -2437,15 +2424,12 @@ if (isGame === true) {
                   objGA.ConvertToLetters[9 - toX] +
                   String(toY);
             }
-
             //console.log(objectWithLegalMoves, lastMoveWithALetterFrom, objGA.lastMove, objGA.inMoves, objGA.pieces)
             if (objectWithLegalMoves[lastMoveWithALetterFrom] === undefined || !objectWithLegalMoves[lastMoveWithALetterFrom].includes(lastMoveWithALetterTo)) {
                resolve(false)
             } else {
                resolve(true)
             }
-
-
          })
       },
 
