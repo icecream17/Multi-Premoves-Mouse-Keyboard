@@ -2,7 +2,7 @@ if (settingsObject.createUI === true) {
     const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
     let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
     for (const key in multiPremoveSettings) {
-        if (!['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB'].includes(key)) {
+        if (!['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB', 'convertCyrillic'].includes(key)) {
             settingsObject[key] = multiPremoveSettings[key]
         }
         //settingsObject[key] = multiPremoveSettings[key]
