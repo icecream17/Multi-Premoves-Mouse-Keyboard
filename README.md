@@ -2,7 +2,7 @@
  Creating unlimited multiple premoves compatible with all Lichess styles of playing (keyboard, mouse, touchscreen)
  
 # Important:
-- This extension is experiemental, but should have much higher capacities than the previous KB extension. If you see a bug, open a new issue and describe it in detail. 
+- This extension is experiemental, but should have higher capacities than the previous KB extension. If you see a bug, open a new issue and describe it in detail. 
 - To install, download the extension (the extension is in the "Extension" folder) and load as an unpacked extension in any Chromium browser (enable developer mode). This is the link to download this repository: https://github.com/Sentero-esp12/Multi-Premoves-Optimized/archive/master.zip . Then watch this video on how to install developer mode extensions: https://www.youtube.com/watch?v=hIRX1dpfqHc . If you still have troubles, google "install unpacked extension chrome" and read a few articles.
 - Due to Lichess updates and the necessary fixes to make the extension functional, it now shows a warning at the top of the page. If you want to disable it (and it might be crucial for the working of the extension), create a Chrome shortcut and add --silent-debugger-extension-api to the 'Shortcut' --> Target field. See how it's done here:
 https://www.thewindowsclub.com/wp-content/uploads/2019/07/Launch-Chrome-with-Switch-1200x790.png
