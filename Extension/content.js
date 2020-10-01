@@ -5,7 +5,6 @@ if (settingsObject.createUI === true) {
         if (!['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB', 'convertCyrillic'].includes(key)) {
             settingsObject[key] = multiPremoveSettings[key]
         }
-        //settingsObject[key] = multiPremoveSettings[key]
     }
 }
 
@@ -62,21 +61,10 @@ if (settingsObject.createUI === true) {
 
 if (isGame === true) {
 
-    //variables from settings 
-    /* let useKeyboard = settingsObject.useKeyboard;
-    let useMouse = settingsObject.useMouse;
-    let rightButtonMulti = settingsObject.rightButton === 'multipremove';
-    let useLeftButton = (!!settingsObject.leftButton && !useMouse); */
     let drawTimeRatio = settingsObject.drawTimeRatio;
     let sendToBackgroundToProduceSound = settingsObject.sendToBackgroundToProduceSound;
     let useMouse = settingsObject.useMouse;
     let experimentalArrows = settingsObject.experimentalArrows;
-
-    /* if (experimentalArrows === true) {
-window.expArrowFunction = () => {
-} 
-    }
-    */
 
     // end of variables from settings
 
@@ -101,29 +89,16 @@ window.expArrowFunction = () => {
         };
 
 
-        /* jquery.src = chrome.runtime.getURL('jquery-3.5.1.slim.min.js');
-        jquery.onload = function () {
-            this.remove();
-        }; */
-        /* (document.head || document.documentElement).appendChild(jquery); */
         (document.head || document.documentElement).appendChild(settingsjs);
         (document.head || document.documentElement).appendChild(chessjs);
         (document.head || document.documentElement).appendChild(script);
 
-        /* let sendToBackgroundToProduceSound = true;
-        let drawTimeRatio = true; */
         var lastMoveIndicator, lastMoveIndicator2;
 
         var ConvertToDigits = {
             a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8
         };
-
         var bW, bX, bY, sqS;
-
-
-
-        /* let sendToBackgroundToProduceSound = false;
-        let drawTimeRatio = false; */
 
         let worker; var useWorkerGlobal = false; let workerFallback;
         let canvas = document.createElement('canvas');
@@ -148,22 +123,24 @@ window.expArrowFunction = () => {
         }
 
 
-
-        /* if (useUltrabulletTheme === true) {
-            chrome.runtime.sendMessage({ type: "theme" });
-        } */
-
-
-
         if (drawTimeRatio === true) {
             let myClock, opClock;
             let configClock = {
                 childList: true
             };
+            let timeBetweenClockMutations = undefined;
             let clockObserver = new MutationObserver((mutations, observer) => {
                 //console.log(mutations)
                 let myTime = getTimeFromClocks(myClock),
                     opTime = getTimeFromClocks(opClock);
+
+                //an attempt to measure common lag
+                /* if (timeBetweenClockMutations !== undefined) {
+                    console.log(performance.now() - timeBetweenClockMutations)
+                }
+                timeBetweenClockMutations = performance.now() */
+                //
+
                 if (useWorkerGlobal === true) {
                     worker.postMessage({ type: 'clock', data: { myTime, opTime } });
                 } else {
@@ -172,38 +149,22 @@ window.expArrowFunction = () => {
             });
 
             setTimeout(() => {
-
                 //sendToBackgroundToProduceSound
-
                 myClock = document.getElementsByClassName('rclock rclock-bottom')[0],
                     opClock = document.getElementsByClassName('rclock rclock-top')[0];
                 let myTimeEl = myClock.getElementsByClassName("time")[0];
                 let oppTimeEl = opClock.getElementsByClassName("time")[0];
                 clockObserver.observe(myTimeEl, configClock);
                 clockObserver.observe(oppTimeEl, configClock);
-                /*  setInterval(function () {
-                     let myTime = getTimeFromClocks(myClock),
-                         opTime = getTimeFromClocks(opClock);
-                     if (useWorkerGlobal === true) {
-                         worker.postMessage({ type: 'clock', data: { myTime, opTime } });
-                     } else {
-                         workerFallback.clock(myTime, opTime)
-                     }
-                 }, 100) */
             }, 600);
         }
-
-
-
-
-
 
 
 
         const createCanvasForOffscreenPainting = (boardWidthUnrounded, boardX, boardY, sqSizeUnrounded, useWorker, myColor) => {
 
             boardWidthUnrounded = bW = Math.round(boardWidthUnrounded), boardX = bX = Math.round(boardX), boardY = bY = Math.round(boardY), sqSizeUnrounded = sqS = Math.round(sqSizeUnrounded)
-            /* bW, bX, bY, sqS; */
+
             let lichessElement = document.body;
             let shadowHost = document.createElement('div')
             shadowHost.id = "shadowHostId"
@@ -249,10 +210,19 @@ window.expArrowFunction = () => {
             if (useWorker === true) {
                 createWorker();
                 useWorkerGlobal = true;
+                canvas.style.opacity = 0.7;
+                if (useUltrabulletTheme === true) {
+                    canvas.style.opacity = 1;
+                } else {
+                    if (experimentalArrows === false) {
+                        canvas.style.opacity = 1;
+                    }
+                }
                 const offscreenCanvas = canvas.transferControlToOffscreen();
                 worker.postMessage({
                     type: 'init', canvas: offscreenCanvas,
-                    size: { boardWidthUnrounded, boardX, boardY, sqSizeUnrounded }
+                    size: { boardWidthUnrounded, boardX, boardY, sqSizeUnrounded },
+                    settings: { useUltrabulletTheme, experimentalArrows }
                 }, [offscreenCanvas]);
             } else {
                 window.context = canvas.getContext('2d');
@@ -268,9 +238,7 @@ window.expArrowFunction = () => {
                 canvas.style.opacity = 0.7;
                 if (useUltrabulletTheme === true) {
                     canvas.style.opacity = 1;
-                    //if (experimentalArrows === false) {
                     opacity = 0.8;
-                    //}
                     window.pieceColors = {
                         pawn: "180, 180, 180",
                         knight: "71, 159, 25",
@@ -279,7 +247,6 @@ window.expArrowFunction = () => {
                         queen: "22, 239, 239",
                         king: "0, 0, 0"
                     }
-
                 } else {
                     window.pieceColors = {
                         pawn: "180, 180, 180",
@@ -320,17 +287,11 @@ window.expArrowFunction = () => {
                         context.lineTo(toX, toY);
                         context.lineTo(secondPoint[0], secondPoint[1]);
                         context.lineWidth = 7;
-                        /* context.lineTo(toX - headLen * Math.cos(angle - Math.PI / 7), toY - headLen * Math.sin(angle - Math.PI / 7));
-                        context.lineTo(toX - headLen * Math.cos(angle + Math.PI / 7), toY - headLen * Math.sin(angle + Math.PI / 7));
-                        context.lineTo(toX, toY);
-                        context.lineTo(toX - headLen * Math.cos(angle - Math.PI / 7), toY - headLen * Math.sin(angle - Math.PI / 7));
-                        context.lineWidth = 7; */
                         context.strokeStyle = `rgba(${color}, 1)`;
                         context.stroke();
                         context.fill();
                         context.closePath();
                     } else {
-                        //context.strokeStyle = `rgba(${color}, ${opacity})`;
                         context.fillStyle = `rgba(${color}, 1)`;
                         context.beginPath();
                         context.arrow(fromX, fromY, toX, toY, [-20, -5, -20, 5, -20, 15]);
@@ -561,7 +522,7 @@ window.expArrowFunction = () => {
             switch (event.data.type) {
                 case "start":
                     let data = event.data.data;
-                    createCanvasForOffscreenPainting(data.boardWidthUnrounded, data.boardX, data.boardY, data.sqSizeUnrounded, data.useWorker, data.myColor)
+                    createCanvasForOffscreenPainting(data.boardWidthUnrounded, data.boardX, data.boardY, data.sqSizeUnrounded, data.useWorker /* false */, data.myColor)
                     break;
                 case "move":
                     let objResult = event.data.coordObj;
@@ -714,15 +675,9 @@ window.expArrowFunction = () => {
             let boardWidthUnrounded, boardX, boardY, sqSizeUnrounded, halfSquare;
             let boardWidthRatio, ratioX, ratioY, sqSize;
             let arrayOfArrows = [];
-            let pieceColors = {
-                pawn: "180, 180, 180",
-                knight: "71, 159, 25",
-                bishop: "231, 241, 35",
-                rook: "148, 21, 177",
-                queen: "22, 239, 239",
-                king: "0, 0, 0"
+            let useUltrabulletTheme, experimentalArrows;
+            let pieceColors, opacity;
 
-            }
             this.onmessage = function (e) {
                 switch (e.data.type) {
                     case 'init':
@@ -734,6 +689,59 @@ window.expArrowFunction = () => {
                             boardY = e.data.size.boardY,
                             sqSizeUnrounded = e.data.size.sqSizeUnrounded,
                             halfSquare = sqSizeUnrounded / 2;
+                        experimentalArrows = e.data.settings.experimentalArrows;
+                        useUltrabulletTheme = e.data.settings.useUltrabulletTheme;
+                        context.arrow = function (startX, startY, endX, endY, controlPoints) { //https://github.com/frogcat/canvas-arrow
+                            var dx = endX - startX;
+                            var dy = endY - startY;
+                            var len = Math.sqrt(dx * dx + dy * dy);
+                            var sin = dy / len;
+                            var cos = dx / len;
+                            var a = [];
+                            a.push(0, 0);
+                            for (var i = 0; i < controlPoints.length; i += 2) {
+                                var x = controlPoints[i];
+                                var y = controlPoints[i + 1];
+                                a.push(x < 0 ? len + x : x, y);
+                            }
+                            a.push(len, 0);
+                            for (var i = controlPoints.length; i > 0; i -= 2) {
+                                var x = controlPoints[i - 2];
+                                var y = controlPoints[i - 1];
+                                a.push(x < 0 ? len + x : x, -y);
+                            }
+                            a.push(0, 0);
+                            for (var i = 0; i < a.length; i += 2) {
+                                var x = a[i] * cos - a[i + 1] * sin + startX;
+                                var y = a[i] * sin + a[i + 1] * cos + startY;
+                                if (i === 0) this.moveTo(x, y);
+                                else this.lineTo(x, y);
+                            }
+                        };
+                        opacity = 0.6;
+                        if (useUltrabulletTheme === true) {
+                            opacity = 0.8;
+                            pieceColors = {
+                                pawn: "180, 180, 180",
+                                knight: "71, 159, 25",
+                                bishop: "231, 241, 35",
+                                rook: "148, 21, 177",
+                                queen: "22, 239, 239",
+                                king: "0, 0, 0"
+                            }
+                        } else {
+                            pieceColors = {
+                                pawn: "180, 180, 180",
+                                knight: "5, 58, 0",
+                                bishop: "105, 100, 1",
+                                rook: "50, 0, 49",
+                                queen: "34, 120, 122",
+                                king: "0, 0, 0"
+                            }
+                            if (experimentalArrows === false) {
+                                opacity = 0.5;
+                            }
+                        }
                         break;
                     case 'move':
                         let objResult = e.data.objResult
@@ -830,42 +838,60 @@ window.expArrowFunction = () => {
             }
 
             const drawArrow = (fromX, fromY, toX, toY, color) => {
-                context.strokeStyle = `rgba(${color}, 0.8)`;
-                context.fillStyle = `rgba(${color}, 1)`;
-                let headLen = 14;
-                let angle = Math.atan2(toY - fromY, toX - fromX);
-                context.beginPath();
-                context.moveTo(fromX, fromY);
-                context.lineTo(toX, toY);
-                context.lineWidth = 7;
-                context.stroke();
-                context.beginPath();
-                context.moveTo(toX, toY);
-                context.lineTo(toX - headLen * Math.cos(angle - Math.PI / 7), toY - headLen * Math.sin(angle - Math.PI / 7));
-                context.lineTo(toX - headLen * Math.cos(angle + Math.PI / 7), toY - headLen * Math.sin(angle + Math.PI / 7));
-                context.lineTo(toX, toY);
-                context.lineTo(toX - headLen * Math.cos(angle - Math.PI / 7), toY - headLen * Math.sin(angle - Math.PI / 7));
-                context.lineWidth = 7;
-                context.strokeStyle = `rgba(${color}, 1)`;
-                context.stroke();
-                context.fill();
+                if (experimentalArrows === false) {
+                    context.strokeStyle = `rgba(${color}, ${opacity})`;
+                    context.fillStyle = `rgba(${color}, 1)`;
+                    let headLen = 14;
+                    let angle = Math.atan2(toY - fromY, toX - fromX);
+                    context.beginPath();
+                    context.moveTo(fromX, fromY);
+                    context.lineTo(toX, toY);
+                    context.lineWidth = 7;
+                    context.stroke();
+                    context.beginPath();
+                    context.moveTo(toX, toY);
+                    let divider = 7;
+                    let secondPoint = [toX - headLen * Math.cos(angle - Math.PI / divider), toY - headLen * Math.sin(angle - Math.PI / divider)]
+                    let thirdPoint = [toX - headLen * Math.cos(angle + Math.PI / divider), toY - headLen * Math.sin(angle + Math.PI / divider)]
+                    context.lineTo(secondPoint[0], secondPoint[1]);
+                    context.lineTo(thirdPoint[0], thirdPoint[1]);
+                    context.lineTo(toX, toY);
+                    context.lineTo(secondPoint[0], secondPoint[1]);
+                    context.lineWidth = 7;
+                    context.strokeStyle = `rgba(${color}, 1)`;
+                    context.stroke();
+                    context.fill();
+                    context.closePath();
+                } else {
+                    context.fillStyle = `rgba(${color}, 1)`;
+                    context.beginPath();
+                    context.arrow(fromX, fromY, toX, toY, [-20, -5, -20, 5, -20, 15]);
+                    context.fill();
+                    context.closePath();
+                }
             }
 
         }
-
 
         const createWorker = () => {
             worker = new Worker('data:application/javascript,' +
                 encodeURIComponent(`(${workerCode.toString()})()`));
             worker.onmessage = (e) => {
             }
-            //worker.postMessage("hello");
         }
     })()
 
 }
-
+/* `
+    body {
+    position: absolute !important;
+    top: 0px !important;
+    left: 80px !important;
+    height: 86vh !important;
+}
+`  */
 var ultraCss =
+
     `
 .rclock .time {
     background: #000000;

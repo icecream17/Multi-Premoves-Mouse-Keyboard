@@ -36,5 +36,8 @@ let settingsObject = {
    experimentalArrows: true,
    inMoveDelay: 0,
    outMoveDelay: 30,
-   convertCyrillic: true
+   convertCyrillic: true,
+   createFromNotation: true,
+   method: MouseEvent,
+   integrity: "ba-4fGr2"
 }

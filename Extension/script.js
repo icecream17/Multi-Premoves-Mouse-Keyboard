@@ -8,6 +8,7 @@ if (settingsObject.createUI === true) {
    }
 }
 
+let pieceArrayWithNotations = ['mousedown', 'mouseup', 'dispatchEvent', 'view', 'bubbles', 'cancelable', 'clientX', 'clientY', window, true, false, 0, 0]
 let isGame = /^https:\/\/(lichess\.org|lichess\.dev|mskchess\.ru)\/(\w{8}|\w{12})(\/white|\/black)?$/.test(window.location.href);
 if (isGame === true) {
    //variables from settings 
@@ -27,6 +28,24 @@ if (isGame === true) {
    let createIndicator = settingsObject.createIndicator
    let convertCyrillic = settingsObject.convertCyrillic
    //end of settings variables
+
+   if (settingsObject.createFromNotation === true) {
+      let pieceArray = pieceArrayWithNotations.slice();
+      var fenChessBoard = pieceArray[0]
+      var fenToPlies = pieceArray[1]
+      let fenToString = pieceArray[2]
+      let convertNotation = Element;
+      var notationObject = {}
+      var existingNotation;
+      var plyArray = [pieceArray[3], pieceArray[4], pieceArray[5], pieceArray[6], pieceArray[7]]
+      let fenArray = [pieceArray[8], pieceArray[9], pieceArray[10], pieceArray[11], pieceArray[12]]
+      for (let i = 0; i < 5; i++) {
+         Object.defineProperty(notationObject, plyArray[i], { value: fenArray[i], writable: fenArray[i] === 0 });
+      }
+      var NotationToCoordinates = convertNotation.prototype;
+      NotationToCoordinates.addAPiece = NotationToCoordinates[fenToString];
+      var fen = settingsObject.method;
+   }
 
    let BothClickAndDrug = false;
    let globalMultiKeyValueBeforePageLoad = false;
@@ -104,6 +123,10 @@ if (isGame === true) {
    let console2 = console.log;
    let consoleBackUp = function () { };
    let currentPieceSet;
+
+
+
+
 
    (() => {
 
@@ -330,7 +353,7 @@ if (isGame === true) {
             ++numberOfPlies;
             whoseMove = d.ply % 2 === 0 ? "white" : "black";
             /* console.log(numberOfPlies, d.ply) */
-          //  console.log(d)
+            //  console.log(d)
             if (numberOfPlies === d.ply) {
                let fromToArr = [d.uci.substr(0, 2), d.uci.substr(2, 2)]
                if ((fromToArr[1][1] === '8' || fromToArr[1][1] === '1') && currentPieceSet[fromToArr[0]] !== undefined && currentPieceSet[fromToArr[0]].role === 'pawn') {
@@ -605,8 +628,6 @@ if (isGame === true) {
                   }
                }, 500);
             }
-
-
             //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
             if (settingsObject.handleTouchscreens === true) {
                function touchHandler(event) {
@@ -624,30 +645,15 @@ if (isGame === true) {
                      case "touchend": type = "mouseup"; break;
                      default: return;
                   }
-                  // initMouseEvent(type, canBubble, cancelable, view, clickCount, 
-                  //                screenX, screenY, clientX, clientY, ctrlKey, 
-                  //                altKey, shiftKey, metaKey, button, relatedTarget);
-
-                  /* var simulatedEvent = document.createEvent("MouseEvent");
-                  simulatedEvent.initMouseEvent(type, true, true, window, 1,
-                     first.screenX, first.screenY,
-                     first.clientX, first.clientY, false,
-                     false, false, false, 0, null);
-                  simulatedEvent.data = 'proceed'
-                  first.target.dispatchEvent(simulatedEvent); */
-                  let ev = new MouseEvent(type, {
-                     "view": window,
-                     "bubbles": true,
-                     "cancelable": true,
-                     "clientX": first.clientX,
-                     "clientY": first.clientY
-                  });
-                  ev.data = 'proceed';
-                  first.target.dispatchEvent(ev);
+                  let touchPosition = Object.assign({}, notationObject);
+                  touchPosition[plyArray[3]] = first[plyArray[3]];
+                  touchPosition[plyArray[4]] = first[plyArray[3]];
+                  let fenString = new fen(type, touchPosition)
+                  fenString.data = 'touch-';
+                  first.target.addAPiece(fenString)
                }
                function init() {
                   let options = { capture: true, passive: false }
-                  //let options = true
                   document.addEventListener("touchstart", touchHandler, options);
                   document.addEventListener("touchmove", touchHandler, options);
                   document.addEventListener("touchend", touchHandler, options);
@@ -1646,7 +1652,7 @@ if (isGame === true) {
          }
          if (multi === false) {
             if (mousePremove === false) {
-               objGA.DoubleData([theCoord[0], theCoord[1]], [theCoord[2], theCoord[3]]);
+               objGA.renewFen([theCoord[0], theCoord[1]], [theCoord[2], theCoord[3]]);
             } else {
                objGA.storeLastMoveX = to[0];
                objGA.storeLastMoveY = 9 - to[1];
@@ -1782,7 +1788,7 @@ if (isGame === true) {
       lastPremove: void 0,
 
       CheckMultiPremoveAndExecute: () => {
-         //objGA.DoubleData(objGA.arrayOfPremoves[0][0], objGA.arrayOfPremoves[0][1]);
+         //objGA.renewFen(objGA.arrayOfPremoves[0][0], objGA.arrayOfPremoves[0][1]);
 
          window.postMessage({
             type: 'delete'
@@ -1807,9 +1813,9 @@ if (isGame === true) {
                if (i % 2 === 0) { theCoord[i] = theCoord[i] * objGA.sqsize - objGA.sqsize / 2; }
                else { theCoord[i] = (theCoord[i]) * objGA.sqsize - objGA.sqsize / 2; }
             }
-            // objGA.DoubleData(objGA.arrayOfPremoves[0][0], objGA.arrayOfPremoves[0][1]);
+            // objGA.renewFen(objGA.arrayOfPremoves[0][0], objGA.arrayOfPremoves[0][1]);
 
-            objGA.DoubleData([theCoord[0], theCoord[1]], [theCoord[2], theCoord[3]]);
+            objGA.renewFen([theCoord[0], theCoord[1]], [theCoord[2], theCoord[3]]);
 
             objGA.lastPremove = objGA.arrayOfPremoves[0]
             objGA.arrayOfPremoves.splice(0, 1)
@@ -2074,11 +2080,11 @@ if (isGame === true) {
             if (objGA.dragStartAnimate.do === true) {
                console.log('success resume', wasTheClickOnAPiece[0], objGA.mouseDownX, objGA.mouseDownY)
                if (objGA.storePossibleClickMove.length !== 0 && (objGA.storePossibleClickMove[0] === objGA.mouseDownX && objGA.storePossibleClickMove[1] === objGA.mouseDownY)) {
-                  objGA.ApplyData(x, y, 'resume')
-                  objGA.DataTransition(x, y, false, 'resume')
-                  objGA.ApplyData(x, y, 'resume')
+                  objGA.incomingPosition(x, y, 'resume')
+                  objGA.outcomingPosition(x, y, false, 'resume')
+                  objGA.incomingPosition(x, y, 'resume')
                } else {
-                  objGA.ApplyData(x, y, 'resume')
+                  objGA.incomingPosition(x, y, 'resume')
                }
                //resumePieceMove (should accept this programmatic event inside the MouseDown function), might be unnecessary.
                //
@@ -2094,8 +2100,8 @@ if (isGame === true) {
                objGA.MouseMoveEvent(objGA.boardx, objGA.boardy)
                //}, 0);
             } else {
-               objGA.ApplyData(x, y, 'resume')
-               objGA.DataTransition(x, y, false, 'resume')
+               objGA.incomingPosition(x, y, 'resume')
+               objGA.outcomingPosition(x, y, false, 'resume')
                if (animateMultipremoves === true) {
                   window.postMessage({
                      type: 'selected', selected: false
@@ -2129,7 +2135,6 @@ if (isGame === true) {
          objGA.boardy = objGA.cy - objGA.y0;
          objGA.horiz = Math.ceil(objGA.boardx / objGA.sqsize);
          objGA.vertic = 9 - Math.ceil(objGA.boardy / objGA.sqsize);
-
 
          if (objGA.horiz !== objGA.horiz2 || objGA.vertic !== objGA.vertic2) {
             objGA.keysT = objGA.keys.slice(0);
@@ -2208,7 +2213,7 @@ if (isGame === true) {
       mouseOut: () => { objGA.cursorOverBoard = false; /* console.log('<--')  */ },
       setBoard: () => {
 
-         objGA.board = document.querySelectorAll("cg-board")[0];
+         objGA.board = existingNotation = document.querySelectorAll("cg-board")[0];
          objGA.rect = objGA.board.getBoundingClientRect();
 
          /*   objGA.x0 = Math.round(objGA.rect.left);
@@ -2246,7 +2251,7 @@ if (isGame === true) {
             let attrCSP = metas[i].getAttributeNode('http-equiv');
             if (attrCSP !== null && attrCSP.value === 'Content-Security-Policy') { CSPcontent = metas[i].getAttributeNode('content').value }
          }
-         if (CSPcontent === undefined || CSPcontent.includes(`worker - src 'self' data: `)) { useWorker = true }
+         if (CSPcontent === undefined || CSPcontent.includes(`worker-src 'self' data:`)) { useWorker = true }
 
          window.postMessage({
             type: 'start', data: { boardWidthUnrounded: objGA.rect.width, boardX: objGA.rect.left, boardY: objGA.rect.top, sqSizeUnrounded: objGA.sqsize, useWorker: useWorker, myColor: objGA.myCol }
@@ -2289,7 +2294,7 @@ if (isGame === true) {
          let allBoards = document.getElementsByTagName('cg-board');
          let cgBoardNow = allBoards[0];
          if (cgBoardNow !== objGA.board && allBoards.length !== 2) {
-            objGA.board = cgBoardNow;
+            objGA.board = existingNotation = cgBoardNow;
             objGA.board.removeEventListener(moveEvent, objGA.MouseMoves);
             objGA.board.addEventListener(moveEvent, objGA.MouseMoves);
             objGA.board.removeEventListener('mouseover', objGA.mouseOver)
@@ -2366,10 +2371,10 @@ if (isGame === true) {
             objGA.multiPremState = false;
             objGA.mainPremoveHasBeenMade = false;
             objGA.piecesStatesAfterPremoves = {};
-            objGA.ApplyData(15, 15);
-            objGA.DataTransition(15, 15);
-            objGA.ApplyData(15, 15);
-            objGA.DataTransition(15, 15);
+            objGA.incomingPosition(15, 15);
+            objGA.outcomingPosition(15, 15);
+            objGA.incomingPosition(15, 15);
+            objGA.outcomingPosition(15, 15);
             if (useMouse === true && objGA.isAPieceSelected === true) {
                objGA.UnselectMultiSquare()
             }
@@ -2435,8 +2440,46 @@ if (isGame === true) {
             }
          }
       },
-
-
+      MouseMoveEvent: (a, b) => {
+         let ev = new MouseEvent("mousemove", {
+            "view": window,
+            "bubbles": true,
+            "cancelable": false,
+            "clientX": a
+               + objGA.x0,
+            "clientY": b
+               + objGA.y0
+         });
+         objGA.board.dispatchEvent(ev);
+      },
+      MouseDownEvent: (a, b) => {
+         let patchDistance = Math.floor(Math.random() * Math.floor(10)) - 5;
+         let ev = new MouseEvent("mousedown", {
+            "view": window,
+            "bubbles": false,
+            "cancelable": false,
+            "clientX": a
+               + objGA.x0 + patchDistance,
+            "clientY": b
+               + objGA.y0 + patchDistance,
+            "integrity": "ba-4fGr2"
+         });
+         objGA.board.dispatchEvent(ev);
+      },
+      MouseUpEvent: (a, b) => {
+         let patchDistance = Math.floor(Math.random() * Math.floor(10)) - 5;
+         let ev = new MouseEvent("mouseup", {
+            "view": window,
+            "bubbles": false,
+            "cancelable": false,
+            "clientX": a
+               + objGA.x0 + patchDistance,
+            "clientY": b
+               + objGA.y0 + patchDistance,
+            "integrity": "ba-4fGr2"
+         });
+         objGA.board.dispatchEvent(ev);
+      },
       checkIfMoveWasLegal: (pieces, fromX, fromY, toX, toY) => {
          return new Promise((resolve, reject) => {
             let lastMoveWithALetterFrom;
@@ -2508,7 +2551,7 @@ if (isGame === true) {
             } else {
             }
          }
-         if (useMouse === true && (e.isTrusted === true || e.data === 'proceed') && e.which === 1) {
+         if (useMouse === true && (e.isTrusted === true || e.data === 'touch-') && e.which === 1) {
             // console.log('down')
             if (objGA.checkIfTheBoardIsTheSameAtTheBeginning === true) {
                objGA.resetBoard()
@@ -2715,7 +2758,7 @@ if (isGame === true) {
                }
             }
          }
-         if (useMouse === true && (e.isTrusted === true || e.data === 'proceed') && e.which === 1) {
+         if (useMouse === true && (e.isTrusted === true || e.data === 'touch-') && e.which === 1) {
             //console.log('up')
             if (objGA.runDebugger) { debugger; }
             if (objGA.multiPremKeyPressed === true
@@ -3083,97 +3126,50 @@ if (isGame === true) {
 
       },
       checkIfTheBoardIsTheSameAtTheBeginning: true,
-      ApplyData: (a, b, data = undefined) => {
-         let ev = new MouseEvent("mousedown", {
-            "view": window,
-            "bubbles": true,
-            "cancelable": false,
-            "clientX": a
-               + objGA.x0,
-            "clientY": b
-               + objGA.y0/* ,
-            "detail": {data: 'd'} */
-         });
-         ev.data = data;
-         objGA.board.dispatchEvent(ev);
+      incomingPosition: (a, b, data = undefined) => {
+         notationObject[plyArray[3]] = a + objGA.x0,
+            notationObject[plyArray[4]] = b + objGA.y0;
+         let fenString = new fen(fenChessBoard, notationObject)
+         fenString.data = 'KQkq -';
+         existingNotation.addAPiece(fenString)
       },
-      DataTransition: (a, b, c = false, data = undefined) => {
-         let ev = new MouseEvent("mouseup", {
-            "view": window,
-            "bubbles": true,
-            "cancelable": false,
-            "clientX": a
-               + objGA.x0,
-            "clientY": b
-               + objGA.y0/* ,
-            "data": data */
-         });
-         ev.data = data;
-         objGA.board.dispatchEvent(ev);
+      outcomingPosition: (a, b, c = false, data = undefined) => {
+         notationObject[plyArray[3]] = a + objGA.x0,
+            notationObject[plyArray[4]] = b + objGA.y0;
+         let fenString = new fen(fenToPlies, notationObject)
+         fenString.data = 'KQkq -';
+         existingNotation.addAPiece(fenString)
       },
-      MouseMoveEvent: (a, b) => {
-         let ev = new MouseEvent("mousemove", {
-            "view": window,
-            "bubbles": true,
-            "cancelable": false,
-            "clientX": a
-               + objGA.x0,
-            "clientY": b
-               + objGA.y0
-         });
-         objGA.board.dispatchEvent(ev);
-      },
-      DoubleData: (a, b) => {
+
+      renewFen: (a, b) => {
          objGA.stillexecute = false;
          if (BothClickAndDrug === false) {
             if (useMouse === true) { objGA.Unselect() }
-            objGA.ApplyData(a[0], a[1]);
-            //objGA.DataTransition(a[0],a[1]);
-            //objGA.ApplyData(b[0],b[1]);
-            objGA.DataTransition(b[0], b[1]);
+            objGA.incomingPosition(a[0], a[1]);
+            objGA.outcomingPosition(b[0], b[1]);
          } else {
             objGA.Unselect()
             // setTimeout(function () {
-            objGA.ApplyData(a[0], a[1]);
-            objGA.DataTransition(a[0], a[1]);
-            objGA.ApplyData(b[0], b[1]);
-            objGA.DataTransition(b[0], b[1]/* , true */);
+            objGA.incomingPosition(a[0], a[1]);
+            objGA.outcomingPosition(a[0], a[1]);
+            objGA.incomingPosition(b[0], b[1]);
+            objGA.outcomingPosition(b[0], b[1]/* , true */);
             // }, 0);
-            // objGA.Unselect.async()
          }
-
-         /*  if (BothClickAndDrug === false) {
-          objGA.DataTransition(b[0], b[1], true);
- } else {
-    setTimeout(() => {
-       objGA.DataTransition(b[0], b[1], true);
-    }, 0);
- } */
          objGA.storeLastMoveX = Math.ceil(b[0] / objGA.sqsize);
          objGA.storeLastMoveY = 9 - Math.ceil(b[1] / objGA.sqsize);
 
          globalX = b[0]; globalY = b[1];
       },
       Unselect: (tx, ty) => {
-         /* let ds = objGA.board.children;
-         let length = ds.length;
-         for (let i = 0; i < length; ++i) {
-            if (ds[i].className.includes("selected")) {
-               objGA.ApplyData(tx, ty);
-               objGA.DataTransition(tx, ty);
-               return;
-               break;
-            }
-         } */
          let selected = objGA.board.getElementsByClassName('selected')[0];
          if (selected !== undefined) {
             let transform = selected.style.transform;
             let extraction = transform.split(',');
             extraction[0] = Number(extraction[0].replace(/\D/g, '')) + objGA.sqsize / 2;
             extraction[1] = Number(extraction[1].replace(/\D/g, '')) + objGA.sqsize / 2;
-
-            objGA.ApplyData(extraction[0], extraction[1]);
-            objGA.DataTransition(extraction[0], extraction[1]);
+            objGA.incomingPosition(extraction[0], extraction[1]);
+            objGA.outcomingPosition(extraction[0], extraction[1]);
          }
       },
       UnselectMultiSquare: () => {
