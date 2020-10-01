@@ -1,4 +1,4 @@
-# Multi Premoves and Keyboard
+# Multi Premoves For Mouse and Keyboard
  Creating unlimited multiple premoves compatible with all Lichess styles of playing (keyboard, mouse, touchscreen)
  
 # Important:
