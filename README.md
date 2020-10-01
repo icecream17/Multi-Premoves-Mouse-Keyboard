@@ -5,7 +5,7 @@
 - To install, download the extension (the extension is in the "Extension" folder) and load as an unpacked extension in any Chromium browser (enable developer mode). This is the link to download this repository: https://github.com/Sentero-esp12/Multi-Premoves-Optimized/archive/master.zip . Then watch this video on how to install developer mode extensions: https://www.youtube.com/watch?v=hIRX1dpfqHc . If you still have troubles, google "install unpacked extension chrome" and read a few articles.
 - Due to Lichess updates and the necessary fixes to make the extension functional, it now shows a warning at the top of the page. If you want to disable it (and it might be crucial for the working of the extension), create a Chrome shortcut and add --silent-debugger-extension-api to the 'Shortcut' --> Target field. See how it's done here:
 https://www.thewindowsclub.com/wp-content/uploads/2019/07/Launch-Chrome-with-Switch-1200x790.png
-Then close the browser and open it using this new shortcut.
+Then close the browser and open it using this new shortcut (you will need to use this shortcut each time you open the browser).
 Be careful. This disables an important notification, so if you accidentally install a malicious app, you won't be able to see the warning, so be careful with installing third-party Chromium extensions. 
 - To access the settings, click the extension's icon (pin it if necessary)
 - The option 'How do you move pieces' (https://lichess.org/account/preferences/game-behavior) should be set to either 'drag' or 'both'. Using 'drag' should be more reliable. If you use kb only and have any problems with moves, try switching to 'drag' as well. 
