@@ -2,7 +2,7 @@ if (settingsObject.createUI === true) {
    const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
    let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
    for (const key in multiPremoveSettings) {
-      if (!['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB', 'convertCyrillic'].includes(key)) {
+      if (!unmodifiableSettings.includes(key)) {
          settingsObject[key] = multiPremoveSettings[key]
       }
    }
@@ -278,19 +278,17 @@ if (isGame === true) {
          //console.log(data)
          let parsed = JSON.parse(data);
          if (parsed.t === 'move') {
-            //console.log('______Opp Move Socket Outcoming', performance.now())
+            let fromToArr = [parsed.d.u.substr(0, 2), parsed.d.u.substr(2, 2)]
+            if (currentPieceSet[fromToArr[0]] === undefined) { return; }
             window.postMessage({
                type: 'out', move: parsed.d.u, myColor: myColor
             }, "*");
             ++numberOfPlies;
             whoseMove = whoseMove === 'white' ? 'black' : 'white';
-            let fromToArr = [parsed.d.u.substr(0, 2), parsed.d.u.substr(2, 2)]
-            if ((fromToArr[1][1] === '8' || fromToArr[1][1] === '1') && currentPieceSet[fromToArr[0]] !== undefined && currentPieceSet[fromToArr[0]].role === 'pawn') {
-               //console.log('promotion-out', parsed)
+            if ((fromToArr[1][1] === '8' || fromToArr[1][1] === '1') && currentPieceSet[fromToArr[0]].role === 'pawn') {
                let promotedTo = parsed.d.u[4].toLowerCase();
                chess.move({ from: fromToArr[0], to: fromToArr[1], promotion: promotedTo })
             } else {
-
                if (currentPieceSet[fromToArr[0]].role === 'king' && ((fromToArr[0] === 'e1') || (fromToArr[0] === 'e8'))) {
                   switch (fromToArr[1]) {
                      case 'a1':
@@ -310,13 +308,9 @@ if (isGame === true) {
                         break;
                   }
                }
-               //console.log('out1',chess.board())
                chess.move({ from: fromToArr[0], to: fromToArr[1] })
-               //console.log('out2',chess.board())
-               //console.log('out-end',parsed.d.u,performance.now())
             }
 
-            //lastMoveMadeUCI = fromToArr.join('');
             lastMoveMadeUCI = parsed.d.u.substr(0, 4);
             LastPieceThatMoved = currentPieceSet[fromToArr[0]].role;
             currentPieceSet = convertToPieceObject(chess.board());
@@ -712,7 +706,7 @@ if (isGame === true) {
             if (chatEl) { chatEl.blur() }
          }
          // })
-
+console.log('400', performance.now())
       }, 400);
 
 
@@ -2256,6 +2250,7 @@ if (isGame === true) {
          window.postMessage({
             type: 'start', data: { boardWidthUnrounded: objGA.rect.width, boardX: objGA.rect.left, boardY: objGA.rect.top, sqSizeUnrounded: objGA.sqsize, useWorker: useWorker, myColor: objGA.myCol }
          }, "*");
+         console.log('start', performance.now())
 
          //rightClickDownWasOverBoard
          document.addEventListener('contextmenu', (e) => {

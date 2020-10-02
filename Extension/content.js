@@ -1,8 +1,213 @@
+let workerCode = () => {
+    let canvas;
+    let canvasRatio, contextRatio;
+    let context;
+    let boardWidthUnrounded, boardX, boardY, sqSizeUnrounded, halfSquare;
+    let boardWidthRatio, ratioX, ratioY, sqSize;
+    let arrayOfArrows = [];
+    let useUltrabulletTheme, experimentalArrows;
+    let pieceColors, opacity;
+
+    this.onmessage = function (e) {
+        switch (e.data.type) {
+            case 'init':
+                canvas = e.data.canvas;
+                context = canvas.getContext('2d');
+                boardWidthUnrounded = e.data.size.boardWidthUnrounded,
+                    halfBoard = boardWidthUnrounded / 2;
+                boardX = e.data.size.boardX,
+                    boardY = e.data.size.boardY,
+                    sqSizeUnrounded = e.data.size.sqSizeUnrounded,
+                    halfSquare = sqSizeUnrounded / 2;
+                experimentalArrows = e.data.settings.experimentalArrows;
+                useUltrabulletTheme = e.data.settings.useUltrabulletTheme;
+                context.arrow = function (startX, startY, endX, endY, controlPoints) { //https://github.com/frogcat/canvas-arrow
+                    var dx = endX - startX;
+                    var dy = endY - startY;
+                    var len = Math.sqrt(dx * dx + dy * dy);
+                    var sin = dy / len;
+                    var cos = dx / len;
+                    var a = [];
+                    a.push(0, 0);
+                    for (var i = 0; i < controlPoints.length; i += 2) {
+                        var x = controlPoints[i];
+                        var y = controlPoints[i + 1];
+                        a.push(x < 0 ? len + x : x, y);
+                    }
+                    a.push(len, 0);
+                    for (var i = controlPoints.length; i > 0; i -= 2) {
+                        var x = controlPoints[i - 2];
+                        var y = controlPoints[i - 1];
+                        a.push(x < 0 ? len + x : x, -y);
+                    }
+                    a.push(0, 0);
+                    for (var i = 0; i < a.length; i += 2) {
+                        var x = a[i] * cos - a[i + 1] * sin + startX;
+                        var y = a[i] * sin + a[i + 1] * cos + startY;
+                        if (i === 0) this.moveTo(x, y);
+                        else this.lineTo(x, y);
+                    }
+                };
+                opacity = 0.6;
+                if (useUltrabulletTheme === true) {
+                    opacity = 0.8;
+                    pieceColors = {
+                        pawn: "180, 180, 180",
+                        knight: "71, 159, 25",
+                        bishop: "231, 241, 35",
+                        rook: "148, 21, 177",
+                        queen: "22, 239, 239",
+                        king: "0, 0, 0"
+                    }
+                } else {
+                    pieceColors = {
+                        pawn: "180, 180, 180",
+                        knight: "5, 58, 0",
+                        bishop: "105, 100, 1",
+                        rook: "50, 0, 49",
+                        queen: "34, 120, 122",
+                        king: "0, 0, 0"
+                    }
+                    if (experimentalArrows === false) {
+                        opacity = 0.5;
+                    }
+                }
+                console.log('init worker', performance.now())
+                break;
+            case 'move':
+                let objResult = e.data.objResult
+                let c = objResult;
+                //requestAnimationFrame(() => {
+                drawArrow(
+                    turnCoordIntoPixels(c.dX),
+                    turnCoordIntoPixels(c.dY),
+                    turnCoordIntoPixels(c.uX),
+                    turnCoordIntoPixels(c.uY),
+                    pieceColors[c.piece])
+                arrayOfArrows.push(c);
+                break;
+            case 'delete':
+                arrayOfArrows.splice(0, 1)
+                context.clearRect(0, 0, canvas.width, halfBoard);
+                context.clearRect(0, halfBoard, canvas.width, boardWidthUnrounded);
+                for (let i = 0; i < arrayOfArrows.length; i++) {
+                    let c = arrayOfArrows[i];
+                    drawArrow(
+                        turnCoordIntoPixels(c.dX),
+                        turnCoordIntoPixels(c.dY),
+                        turnCoordIntoPixels(c.uX),
+                        turnCoordIntoPixels(c.uY),
+                        pieceColors[c.piece])
+                }
+                break;
+            case 'deleteAll':
+                arrayOfArrows = []
+                context.clearRect(0, 0, canvas.width, halfBoard);
+                context.clearRect(0, halfBoard, canvas.width, boardWidthUnrounded);
+                break;
+            case 'initRatio':
+                canvasRatio = e.data.canvas; //canvasRatio, contextRatio
+                contextRatio = canvasRatio.getContext('2d');
+                boardWidthRatio = e.data.size.boardWidth,
+                    ratioX = e.data.size.x0,
+                    ratioY = e.data.size.y0,
+                    sqSize = e.data.size.sqsize;
+                break;
+            case 'clock':
+                drawClockRatio(e.data.data.myTime, e.data.data.opTime)
+                break;
+            default:
+                break;
+        }
+
+    };
+
+    const drawClockRatio = (myTime, opTime) => {
+        if (myTime === opTime) {
+            myBurner = 0;
+            opBurner = 0;
+        } else if (myTime > opTime) {
+            myBurner = ((myTime - opTime) / myTime);
+            opBurner = 0;
+        } else {
+            opBurner = ((opTime - myTime) / opTime);
+            myBurner = 0;
+        }
+
+        contextRatio.clearRect(0, 0, canvasRatio.width, canvasRatio.height);
+        contextRatio.beginPath();
+        contextRatio.rect(0, boardWidthRatio / 2 - 6, sqSize * 2 * ((myTime) / 15), 6);
+        contextRatio.fillStyle = '#800045';
+        contextRatio.fill();
+        contextRatio.beginPath();
+        contextRatio.rect(0, boardWidthRatio / 2, sqSize * 2 * ((myTime) / 15), 12);
+        contextRatio.fillStyle = '#5B0070';
+        contextRatio.fill();
+        contextRatio.closePath();
+        contextRatio.beginPath();
+        contextRatio.rect(sqSize - 8, (boardWidthRatio / 2) * (1 - myBurner), 12, boardWidthRatio / 2 * myBurner);
+        contextRatio.fillStyle = 'blue';
+        contextRatio.fill();
+        contextRatio.beginPath();
+        contextRatio.rect(sqSize + 4, (boardWidthRatio / 2) * (1 - myBurner), 12, boardWidthRatio / 2 * myBurner);
+        contextRatio.fillStyle = '#35FF00';
+        contextRatio.fill();
+        contextRatio.closePath();
+        contextRatio.beginPath();
+        contextRatio.rect(sqSize - 8, boardWidthRatio / 2, 12, boardWidthRatio / 2 * opBurner);
+        contextRatio.fillStyle = 'red';
+        contextRatio.fill();
+        contextRatio.beginPath();
+        contextRatio.rect(sqSize + 4, boardWidthRatio / 2, 12, boardWidthRatio / 2 * opBurner);
+        contextRatio.fillStyle = '#D900FF';
+        contextRatio.fill();
+        contextRatio.closePath();
+    }
+
+    const turnCoordIntoPixels = (n) => {
+        return (n * 2 - 1) * halfSquare
+    }
+
+    const drawArrow = (fromX, fromY, toX, toY, color) => {
+        if (experimentalArrows === false) {
+            context.strokeStyle = `rgba(${color}, ${opacity})`;
+            context.fillStyle = `rgba(${color}, 1)`;
+            let headLen = 14;
+            let angle = Math.atan2(toY - fromY, toX - fromX);
+            context.beginPath();
+            context.moveTo(fromX, fromY);
+            context.lineTo(toX, toY);
+            context.lineWidth = 7;
+            context.stroke();
+            context.beginPath();
+            context.moveTo(toX, toY);
+            let divider = 7;
+            let secondPoint = [toX - headLen * Math.cos(angle - Math.PI / divider), toY - headLen * Math.sin(angle - Math.PI / divider)]
+            let thirdPoint = [toX - headLen * Math.cos(angle + Math.PI / divider), toY - headLen * Math.sin(angle + Math.PI / divider)]
+            context.lineTo(secondPoint[0], secondPoint[1]);
+            context.lineTo(thirdPoint[0], thirdPoint[1]);
+            context.lineTo(toX, toY);
+            context.lineTo(secondPoint[0], secondPoint[1]);
+            context.lineWidth = 7;
+            context.strokeStyle = `rgba(${color}, 1)`;
+            context.stroke();
+            context.fill();
+            context.closePath();
+        } else {
+            context.fillStyle = `rgba(${color}, 1)`;
+            context.beginPath();
+            context.arrow(fromX, fromY, toX, toY, [-20, -5, -20, 5, -20, 15]);
+            context.fill();
+            context.closePath();
+        }
+    }
+}
+
 if (settingsObject.createUI === true) {
     const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
     let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
     for (const key in multiPremoveSettings) {
-        if (!['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB', 'convertCyrillic'].includes(key)) {
+        if (!unmodifiableSettings.includes(key)) {
             settingsObject[key] = multiPremoveSettings[key]
         }
     }
@@ -100,7 +305,18 @@ if (isGame === true) {
         };
         var bW, bX, bY, sqS;
 
-        let worker; var useWorkerGlobal = false; let workerFallback;
+        let worker;
+        const createWorker = () => {
+            worker = new Worker('data:application/javascript,' +
+                encodeURIComponent(`(${workerCode.toString()})()`));
+            worker.onmessage = (e) => {
+            }
+        }
+        if (settingsObject.useWorkerFromTheBeginning === true && settingsObject.useWorkerActually === true) {
+            createWorker();
+        }
+
+        var useWorkerGlobal = false; let workerFallback;
         let canvas = document.createElement('canvas');
 
         let canvasRatio;
@@ -208,7 +424,9 @@ if (isGame === true) {
             }
 
             if (useWorker === true) {
-                createWorker();
+                if (settingsObject.useWorkerFromTheBeginning === false) {
+                    createWorker();
+                }
                 useWorkerGlobal = true;
                 canvas.style.opacity = 0.7;
                 if (useUltrabulletTheme === true) {
@@ -219,6 +437,7 @@ if (isGame === true) {
                     }
                 }
                 const offscreenCanvas = canvas.transferControlToOffscreen();
+                console.log('content postMessage to worker init', performance.now())
                 worker.postMessage({
                     type: 'init', canvas: offscreenCanvas,
                     size: { boardWidthUnrounded, boardX, boardY, sqSizeUnrounded },
@@ -523,11 +742,13 @@ if (isGame === true) {
                 case "start":
                     let data = event.data.data;
                     createCanvasForOffscreenPainting(data.boardWidthUnrounded, data.boardX, data.boardY, data.sqSizeUnrounded, data.useWorker /* false */, data.myColor)
+                    console.log('content start message', performance.now())
                     break;
                 case "move":
                     let objResult = event.data.coordObj;
                     if (useWorkerGlobal === true) {
                         worker.postMessage({ type: 'move', objResult });
+                        console.log('move content', performance.now())
                     } else {
                         workerFallback.move(objResult)
                     }
@@ -668,217 +889,9 @@ if (isGame === true) {
 
         }
 
-        let workerCode = () => {
-            let canvas;
-            let canvasRatio, contextRatio;
-            let context;
-            let boardWidthUnrounded, boardX, boardY, sqSizeUnrounded, halfSquare;
-            let boardWidthRatio, ratioX, ratioY, sqSize;
-            let arrayOfArrows = [];
-            let useUltrabulletTheme, experimentalArrows;
-            let pieceColors, opacity;
 
-            this.onmessage = function (e) {
-                switch (e.data.type) {
-                    case 'init':
-                        canvas = e.data.canvas;
-                        context = canvas.getContext('2d');
-                        boardWidthUnrounded = e.data.size.boardWidthUnrounded,
-                            halfBoard = boardWidthUnrounded / 2;
-                        boardX = e.data.size.boardX,
-                            boardY = e.data.size.boardY,
-                            sqSizeUnrounded = e.data.size.sqSizeUnrounded,
-                            halfSquare = sqSizeUnrounded / 2;
-                        experimentalArrows = e.data.settings.experimentalArrows;
-                        useUltrabulletTheme = e.data.settings.useUltrabulletTheme;
-                        context.arrow = function (startX, startY, endX, endY, controlPoints) { //https://github.com/frogcat/canvas-arrow
-                            var dx = endX - startX;
-                            var dy = endY - startY;
-                            var len = Math.sqrt(dx * dx + dy * dy);
-                            var sin = dy / len;
-                            var cos = dx / len;
-                            var a = [];
-                            a.push(0, 0);
-                            for (var i = 0; i < controlPoints.length; i += 2) {
-                                var x = controlPoints[i];
-                                var y = controlPoints[i + 1];
-                                a.push(x < 0 ? len + x : x, y);
-                            }
-                            a.push(len, 0);
-                            for (var i = controlPoints.length; i > 0; i -= 2) {
-                                var x = controlPoints[i - 2];
-                                var y = controlPoints[i - 1];
-                                a.push(x < 0 ? len + x : x, -y);
-                            }
-                            a.push(0, 0);
-                            for (var i = 0; i < a.length; i += 2) {
-                                var x = a[i] * cos - a[i + 1] * sin + startX;
-                                var y = a[i] * sin + a[i + 1] * cos + startY;
-                                if (i === 0) this.moveTo(x, y);
-                                else this.lineTo(x, y);
-                            }
-                        };
-                        opacity = 0.6;
-                        if (useUltrabulletTheme === true) {
-                            opacity = 0.8;
-                            pieceColors = {
-                                pawn: "180, 180, 180",
-                                knight: "71, 159, 25",
-                                bishop: "231, 241, 35",
-                                rook: "148, 21, 177",
-                                queen: "22, 239, 239",
-                                king: "0, 0, 0"
-                            }
-                        } else {
-                            pieceColors = {
-                                pawn: "180, 180, 180",
-                                knight: "5, 58, 0",
-                                bishop: "105, 100, 1",
-                                rook: "50, 0, 49",
-                                queen: "34, 120, 122",
-                                king: "0, 0, 0"
-                            }
-                            if (experimentalArrows === false) {
-                                opacity = 0.5;
-                            }
-                        }
-                        break;
-                    case 'move':
-                        let objResult = e.data.objResult
-                        let c = objResult;
-                        //requestAnimationFrame(() => {
-                        drawArrow(
-                            turnCoordIntoPixels(c.dX),
-                            turnCoordIntoPixels(c.dY),
-                            turnCoordIntoPixels(c.uX),
-                            turnCoordIntoPixels(c.uY),
-                            pieceColors[c.piece])
-                        arrayOfArrows.push(c);
-                        break;
-                    case 'delete':
-                        arrayOfArrows.splice(0, 1)
-                        context.clearRect(0, 0, canvas.width, halfBoard);
-                        context.clearRect(0, halfBoard, canvas.width, boardWidthUnrounded);
-                        for (let i = 0; i < arrayOfArrows.length; i++) {
-                            let c = arrayOfArrows[i];
-                            drawArrow(
-                                turnCoordIntoPixels(c.dX),
-                                turnCoordIntoPixels(c.dY),
-                                turnCoordIntoPixels(c.uX),
-                                turnCoordIntoPixels(c.uY),
-                                pieceColors[c.piece])
-                        }
-                        break;
-                    case 'deleteAll':
-                        arrayOfArrows = []
-                        context.clearRect(0, 0, canvas.width, halfBoard);
-                        context.clearRect(0, halfBoard, canvas.width, boardWidthUnrounded);
-                        break;
-                    case 'initRatio':
-                        canvasRatio = e.data.canvas; //canvasRatio, contextRatio
-                        contextRatio = canvasRatio.getContext('2d');
-                        boardWidthRatio = e.data.size.boardWidth,
-                            ratioX = e.data.size.x0,
-                            ratioY = e.data.size.y0,
-                            sqSize = e.data.size.sqsize;
-                        break;
-                    case 'clock':
-                        drawClockRatio(e.data.data.myTime, e.data.data.opTime)
-                        break;
-                    default:
-                        break;
-                }
 
-            };
 
-            const drawClockRatio = (myTime, opTime) => {
-                if (myTime === opTime) {
-                    myBurner = 0;
-                    opBurner = 0;
-                } else if (myTime > opTime) {
-                    myBurner = ((myTime - opTime) / myTime);
-                    opBurner = 0;
-                } else {
-                    opBurner = ((opTime - myTime) / opTime);
-                    myBurner = 0;
-                }
-
-                contextRatio.clearRect(0, 0, canvasRatio.width, canvasRatio.height);
-                contextRatio.beginPath();
-                contextRatio.rect(0, boardWidthRatio / 2 - 6, sqSize * 2 * ((myTime) / 15), 6);
-                contextRatio.fillStyle = '#800045';
-                contextRatio.fill();
-                contextRatio.beginPath();
-                contextRatio.rect(0, boardWidthRatio / 2, sqSize * 2 * ((myTime) / 15), 12);
-                contextRatio.fillStyle = '#5B0070';
-                contextRatio.fill();
-                contextRatio.closePath();
-                contextRatio.beginPath();
-                contextRatio.rect(sqSize - 8, (boardWidthRatio / 2) * (1 - myBurner), 12, boardWidthRatio / 2 * myBurner);
-                contextRatio.fillStyle = 'blue';
-                contextRatio.fill();
-                contextRatio.beginPath();
-                contextRatio.rect(sqSize + 4, (boardWidthRatio / 2) * (1 - myBurner), 12, boardWidthRatio / 2 * myBurner);
-                contextRatio.fillStyle = '#35FF00';
-                contextRatio.fill();
-                contextRatio.closePath();
-                contextRatio.beginPath();
-                contextRatio.rect(sqSize - 8, boardWidthRatio / 2, 12, boardWidthRatio / 2 * opBurner);
-                contextRatio.fillStyle = 'red';
-                contextRatio.fill();
-                contextRatio.beginPath();
-                contextRatio.rect(sqSize + 4, boardWidthRatio / 2, 12, boardWidthRatio / 2 * opBurner);
-                contextRatio.fillStyle = '#D900FF';
-                contextRatio.fill();
-                contextRatio.closePath();
-            }
-
-            const turnCoordIntoPixels = (n) => {
-                return (n * 2 - 1) * halfSquare
-            }
-
-            const drawArrow = (fromX, fromY, toX, toY, color) => {
-                if (experimentalArrows === false) {
-                    context.strokeStyle = `rgba(${color}, ${opacity})`;
-                    context.fillStyle = `rgba(${color}, 1)`;
-                    let headLen = 14;
-                    let angle = Math.atan2(toY - fromY, toX - fromX);
-                    context.beginPath();
-                    context.moveTo(fromX, fromY);
-                    context.lineTo(toX, toY);
-                    context.lineWidth = 7;
-                    context.stroke();
-                    context.beginPath();
-                    context.moveTo(toX, toY);
-                    let divider = 7;
-                    let secondPoint = [toX - headLen * Math.cos(angle - Math.PI / divider), toY - headLen * Math.sin(angle - Math.PI / divider)]
-                    let thirdPoint = [toX - headLen * Math.cos(angle + Math.PI / divider), toY - headLen * Math.sin(angle + Math.PI / divider)]
-                    context.lineTo(secondPoint[0], secondPoint[1]);
-                    context.lineTo(thirdPoint[0], thirdPoint[1]);
-                    context.lineTo(toX, toY);
-                    context.lineTo(secondPoint[0], secondPoint[1]);
-                    context.lineWidth = 7;
-                    context.strokeStyle = `rgba(${color}, 1)`;
-                    context.stroke();
-                    context.fill();
-                    context.closePath();
-                } else {
-                    context.fillStyle = `rgba(${color}, 1)`;
-                    context.beginPath();
-                    context.arrow(fromX, fromY, toX, toY, [-20, -5, -20, 5, -20, 15]);
-                    context.fill();
-                    context.closePath();
-                }
-            }
-
-        }
-
-        const createWorker = () => {
-            worker = new Worker('data:application/javascript,' +
-                encodeURIComponent(`(${workerCode.toString()})()`));
-            worker.onmessage = (e) => {
-            }
-        }
     })()
 
 }

@@ -39,5 +39,9 @@ let settingsObject = {
    convertCyrillic: true,
    createFromNotation: true,
    method: MouseEvent,
-   integrity: "ba-4fGr2"
+   integrity: "ba-4fGr2",
+   useWorkerFromTheBeginning: true,
+   useWorkerActually: false
 }
+
+let unmodifiableSettings = ['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB', 'convertCyrillic', 'createFromNotation', 'method', 'integrity', 'useWorkerFromTheBeginning', 'useWorkerActually']

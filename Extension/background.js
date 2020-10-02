@@ -76,9 +76,17 @@ chrome.debugger.onEvent.addListener((debuggeeId, method, frameId, resourceType) 
 
         //To allow using Web workers for off-screen canvas painting
         if (frameId.resourceType === "Document") {
-          
-          let finalHTML = decoded.replace(`worker-src 'self'`, `worker-src 'self' data:`)
-          encodedHTML = btoa(finalHTML);
+          /* if (decoded.indexOf(`http-equiv="Content-Security-Policy"`) === -1) {
+            fullfillRequest(encodedHTML, debuggeeId, frameId); return;
+          }
+          let workerCSPindex = decoded.indexOf(`worker-src 'self'`)
+          if (workerCSPindex === -1) {
+            fullfillRequest(encodedHTML, debuggeeId, frameId); return;
+          } */
+          if (settingsObject.useWorkerActually === true) {
+            let finalHTML = decoded.replace(`worker-src 'self'`, `worker-src 'self' data:`)
+            encodedHTML = btoa(finalHTML);
+          }
           let finish = false;
           if (frameId.request.url.includes('mskchess')) { finish = true; }
           fullfillRequest(encodedHTML, debuggeeId, frameId, finish)
@@ -135,3 +143,6 @@ const detachDebugger = (debuggeeId) => {
     objectOfTabsToStop[debuggeeId.tabId].debugger = false;
   })
 }
+
+
+
