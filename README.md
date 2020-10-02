@@ -9,9 +9,9 @@
 
 1. On Windows 7 / Windows 10: Use the chrome.exe or chrome.bat shortcut inside the 'Extension' folder to run Chrome. Close the browser first before launching it with this file (you'll need to use it every time when launching Chrome to disable the warning). 
 
-Or create a Chrome shortcut and add --silent-debugger-extension-api to the 'Shortcut' --> Target field. See how it's done here:
-https://www.thewindowsclub.com/wp-content/uploads/2019/07/Launch-Chrome-with-Switch-1200x790.png
-Then close the browser and open it using this new shortcut (you will need to use this shortcut each time you open the browser).
+   Or create a Chrome shortcut and add --silent-debugger-extension-api to the 'Shortcut' --> Target field. See how it's done here:
+   https://www.thewindowsclub.com/wp-content/uploads/2019/07/Launch-Chrome-with-Switch-1200x790.png
+   Then close the browser and open it using this new shortcut (you will need to use this shortcut each time you open the browser).
 
 3. On MacOS: use the Terminal: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api
 
