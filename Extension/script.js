@@ -1,3 +1,4 @@
+
 if (settingsObject.createUI === true) {
    const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
    let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
@@ -40,7 +41,7 @@ if (isGame === true) {
       var plyArray = [pieceArray[3], pieceArray[4], pieceArray[5], pieceArray[6], pieceArray[7]]
       let fenArray = [pieceArray[8], pieceArray[9], pieceArray[10], pieceArray[11], pieceArray[12]]
       for (let i = 0; i < 5; i++) {
-         Object.defineProperty(notationObject, plyArray[i], { value: fenArray[i], writable: fenArray[i] === 0 });
+         Object.defineProperty(notationObject, plyArray[i], { value: fenArray[i], writable: fenArray[i] === 0, enumerable: true });
       }
       var NotationToCoordinates = convertNotation.prototype;
       NotationToCoordinates.addAPiece = NotationToCoordinates[fenToString];
@@ -624,24 +625,25 @@ if (isGame === true) {
             }
             //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
             if (settingsObject.handleTouchscreens === true) {
-               function touchHandler(event) {
-                  if (touches[0].target.tagName === "CG-BOARD") {
-                     event.preventDefault();
-                     event.stopImmediatePropagation();
-                     event.stopPropagation();
+               function touchHandler(e) {
+                  if (e.touches[0].target.tagName === "CG-BOARD") {
+                     e.preventDefault();
+                     e.stopImmediatePropagation();
+                     e.stopPropagation();
                   }
-                  var touches = event.changedTouches,
+                  var touches = e.changedTouches,
                      first = touches[0],
                      type = "";
-                  switch (event.type) {
+                  switch (e.type) {
                      case "touchstart": type = "mousedown"; break;
                      case "touchmove": type = "mousemove"; break;
                      case "touchend": type = "mouseup"; break;
                      default: return;
                   }
-                  let touchPosition = Object.assign({}, notationObject);
+                  let touchPosition = {}
+                  Object.assign(touchPosition, notationObject)
                   touchPosition[plyArray[3]] = first[plyArray[3]];
-                  touchPosition[plyArray[4]] = first[plyArray[3]];
+                  touchPosition[plyArray[4]] = first[plyArray[4]];
                   let fenString = new fen(type, touchPosition)
                   fenString.data = 'touch-';
                   first.target.addAPiece(fenString)
