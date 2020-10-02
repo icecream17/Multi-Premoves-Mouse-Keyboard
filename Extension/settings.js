@@ -41,7 +41,8 @@ let settingsObject = {
    method: MouseEvent,
    integrity: "ba-4fGr2",
    useWorkerFromTheBeginning: true,
-   useWorkerActually: false
+   useWorkerActually: false,
+   alwaysMultiPremove: false
 }
 
 let unmodifiableSettings = ['inMoveDelay', 'outMoveDelay', 'sendToBackgroundToProduceSound', 'createUI', 'downEvent', 'upEvent', 'moveEvent', 'handleTouchscreens', 'detectPrevKB', 'convertCyrillic', 'createFromNotation', 'method', 'integrity', 'useWorkerFromTheBeginning', 'useWorkerActually']

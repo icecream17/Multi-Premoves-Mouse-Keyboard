@@ -29,6 +29,7 @@ if (settingsObject.createUI === true) {
                basic: {
                   "Multi Premove Key": { value: settingsObject.multipremove, node: "input", setting: "multipremove" },
                   "Cancel Premoves": { value: settingsObject.cancelPremoves, node: "input", setting: "cancelPremoves" },
+                  "Always multipremove": { value: settingsObject.alwaysMultiPremove, node: "checkbox", setting: "alwaysMultiPremove" }
                },
                advanced: {
                   "Use keyboard": { value: settingsObject.useKeyboard, node: "checkbox", setting: "useKeyboard" },
@@ -206,7 +207,7 @@ transition: all 0.2s;
                reloadRequired = false;
                //let sameKeysDisallowed = false;
                let parametersThatRequireReload =
-                  ['drawTimeRatio', 'useUltrabulletTheme', 'animateMultipremoves', 'useMouse', 'createIndicator', 'experimentalArrows']
+                  ['drawTimeRatio', 'useUltrabulletTheme', 'animateMultipremoves', 'useMouse', 'createIndicator', 'experimentalArrows', 'alwaysMultiPremove']
                //let storeAllKeys = [];
                for (let i = 0; i < settingsCollection.length; i++) {
                   let parameter = settingsCollection[i]

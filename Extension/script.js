@@ -588,7 +588,7 @@ if (isGame === true) {
                   objGA.indicator.style.position = 'absolute'
                   objGA.indicator.style.top = objGA.y0 + objGA.w + 90 + 'px'
                   objGA.indicator.style.left = objGA.x0 + 'px'
-                  objGA.indicator.style.background = '#35290e'
+                  objGA.indicator.style.background = settingsObject.alwaysMultiPremove === false ? '#35290e' : '#114811'
                   objGA.indicator.style.border = 'solid 2px #8e8e8e'
                   objGA.indicator.style.borderRadius = '50px'
                   shadowDom.appendChild(objGA.indicator)
@@ -706,7 +706,7 @@ if (isGame === true) {
             if (chatEl) { chatEl.blur() }
          }
          // })
-console.log('400', performance.now())
+         console.log('400', performance.now())
       }, 400);
 
 
@@ -2280,7 +2280,7 @@ console.log('400', performance.now())
          // //console.log(objGA.premoves);
       },
 
-      multiPremKeyPressed: globalMultiKeyValueBeforePageLoad,
+      multiPremKeyPressed: globalMultiKeyValueBeforePageLoad || settingsObject.alwaysMultiPremove,
       multiPremState: false,
       arrayOfPremoves: [],
       mainPremoveHasBeenMade: false,
