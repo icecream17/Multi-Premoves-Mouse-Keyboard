@@ -1,4 +1,6 @@
 
+
+
 if (settingsObject.createUI === true) {
    const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
    let multiPremoveSettings = JSON.parse(multiPremoveSettingsString)
@@ -466,6 +468,9 @@ if (isGame === true) {
       }
 
 
+
+
+
       setTimeout(() => {
          //  $(document).ready(() => {
          let scriptCollection = document.getElementsByTagName('script');
@@ -594,6 +599,7 @@ if (isGame === true) {
                   objGA.indicator.style.borderRadius = '50px'
                   shadowDom.appendChild(objGA.indicator)
                   objGA.indicator.addEventListener('mousedown', (e) => {
+                     console.log(e)
                      if (objGA.multiPremKeyPressed === true) {
                         objGA.multiPremKeyPressed = false;
                         objGA.indicator.style.background = '#35290e'
@@ -623,41 +629,7 @@ if (isGame === true) {
                   }
                }, 500);
             }
-            //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
-            if (settingsObject.handleTouchscreens === true) {
-               function touchHandler(e) {
-                  if (e.touches[0].target.tagName === "CG-BOARD") {
-                     e.preventDefault();
-                     e.stopImmediatePropagation();
-                     e.stopPropagation();
-                  }
-                  var touches = e.changedTouches,
-                     first = touches[0],
-                     type = "";
-                  switch (e.type) {
-                     case "touchstart": type = "mousedown"; break;
-                     case "touchmove": type = "mousemove"; break;
-                     case "touchend": type = "mouseup"; break;
-                     default: return;
-                  }
-                  let touchPosition = {}
-                  Object.assign(touchPosition, notationObject)
-                  touchPosition[plyArray[3]] = first[plyArray[3]];
-                  touchPosition[plyArray[4]] = first[plyArray[4]];
-                  let fenString = new fen(type, touchPosition)
-                  fenString.data = 'touch-';
-                  first.target.addAPiece(fenString)
-               }
-               function init() {
-                  let options = { capture: true, passive: false }
-                  document.addEventListener("touchstart", touchHandler, options);
-                  document.addEventListener("touchmove", touchHandler, options);
-                  document.addEventListener("touchend", touchHandler, options);
-                  document.addEventListener("touchcancel", touchHandler, options);
-               }
-               init()
-            }
-            //end code for handling touchscreens
+
 
 
 
@@ -709,6 +681,51 @@ if (isGame === true) {
          }
          // })
          console.log('400', performance.now())
+
+
+
+         //code for handling touchscreens https://stackoverflow.com/a/1781750/10364842
+         if (settingsObject.handleTouchscreens === true) {
+            function touchHandler(e) {
+               if (e.changedTouches[0] === undefined) { debugger; }
+               if (/* true ||  */e.changedTouches[0].target.tagName === "CG-BOARD"
+                  || e.changedTouches[0].target.id === "indicator") {
+                  e.preventDefault();
+                  e.stopImmediatePropagation();
+                  e.stopPropagation();
+               }
+               var touches = e.changedTouches,
+                  first = touches[0],
+                  type = "";
+               console.log(e, e.type)
+               switch (e.type) {
+                  case "touchstart": type = "mousedown"; break;
+                  case "touchmove": type = "mousemove"; break;
+                  case "touchend": type = "mouseup"; break;
+                  default: return;
+               }
+               let touchPosition = {}
+               Object.assign(touchPosition, notationObject)
+               touchPosition[plyArray[2]] = true;
+               touchPosition[plyArray[3]] = first[plyArray[3]];
+               touchPosition[plyArray[4]] = first[plyArray[4]];
+               let fenString = new fen(type, touchPosition)
+               fenString.data = 'touch-';
+               first.target.addAPiece(fenString)
+            }
+            function init() {
+               let options = { capture: true, passive: false }
+               let thing = window;
+               thing.addEventListener("touchstart", touchHandler, options);
+               thing.addEventListener("touchmove", touchHandler, options);
+               thing.addEventListener("touchend", touchHandler, options);
+               thing.addEventListener("touchcancel", touchHandler, options);
+            }
+            init()
+         }
+         //end code for handling touchscreens
+
+
       }, 400);
 
 
