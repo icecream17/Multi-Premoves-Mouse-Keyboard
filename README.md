@@ -11,7 +11,9 @@
 https://www.thewindowsclub.com/wp-content/uploads/2019/07/Launch-Chrome-with-Switch-1200x790.png
 Then close the browser and open it using this new shortcut (you will need to use this shortcut each time you open the browser).
 
-2. On Windows 10: Use the chrome.bat file inside the 'Extension' folder to run Chrome. Close the browser before launching it with this file. 
+2. On Windows 10: Use the chrome.bat file inside the 'Extension' folder to run Chrome. Close the browser before launching it with this file.
+
+3. On MacOS: with the Terminal: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --silent-debugger-extension-api
 
 Be careful! This disables an important notification, so if you accidentally install a malicious app, you won't be able to see the warning, so be careful with installing third-party Chromium extensions. 
 - To access the settings, click the extension's icon (pin it if necessary)
