@@ -76,9 +76,7 @@ chrome.debugger.onEvent.addListener((debuggeeId, method, frameId, resourceType) 
 
         //To allow using Web workers for off-screen canvas painting
         if (frameId.resourceType === "Document") {
-          if (decoded.indexOf(`http-equiv="Content-Security-Policy"`) === -1) return;
-          let workerCSPindex = decoded.indexOf(`worker-src 'self'`)
-          if (workerCSPindex === -1) return;
+          
           let finalHTML = decoded.replace(`worker-src 'self'`, `worker-src 'self' data:`)
           encodedHTML = btoa(finalHTML);
           let finish = false;
@@ -87,6 +85,7 @@ chrome.debugger.onEvent.addListener((debuggeeId, method, frameId, resourceType) 
         }
         else if (frameId.resourceType === "Script" && frameId.request.url.includes('round')) {
           let tIndex = decoded.search(/!\w{1}\.isT/);
+          if (tIndex === -1) { fullfillRequest(encodedHTML, debuggeeId, frameId); return; }
           let dIndex = decoded.search(/\.isT/);
           let numberOfLetters = dIndex - tIndex - 1;
           let completed = decoded.replace(/!\w\.isT\w{6}/, `(${decoded.substr(tIndex, numberOfLetters + 11)} && (!${decoded.substr(tIndex + 1, numberOfLetters)}.data || ${decoded.substr(tIndex + 1, numberOfLetters)}.data[5] !== '-'))`)
@@ -136,4 +135,3 @@ const detachDebugger = (debuggeeId) => {
     objectOfTabsToStop[debuggeeId.tabId].debugger = false;
   })
 }
-
