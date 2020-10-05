@@ -480,19 +480,18 @@ if (isGame === true) {
          }
          let indexOfBoot = scriptTagWithInfo.indexOf('boot(') + 5;
          let parsableGameInfo = scriptTagWithInfo
-            .substr(indexOfBoot/* , scriptTagWithInfo.length - 1 - indexOfBoot */);
+            .substr(indexOfBoot);
          let positionOfTheClosingBracket = findClosingBracketMatchIndex(parsableGameInfo, 0)
-         parsableGameInfo = parsableGameInfo.substr(0, positionOfTheClosingBracket + 1)
-
+         let parsableGameInfoFinal = parsableGameInfo.substr(0, positionOfTheClosingBracket + 1)
          // findClosingBracketMatchIndex(str, pos)
-
          let gameInfo;
-
          try {
-            gameInfo = JSON.parse(parsableGameInfo);
-            // console.log(gameInfo)
+            gameInfo = JSON.parse(parsableGameInfoFinal);
          } catch (e) {
-            //console.log(e)
+            console.log(e)
+            parsableGameInfoFinal = parsableGameInfo.substr(0, parsableGameInfo.length - 3)
+            try { gameInfo = JSON.parse(parsableGameInfoFinal); }
+            catch (e) { console.log(e); alert('Cannot parse JSON') }
          };
 
          if ((gameInfo.data.player.id === undefined || gameInfo.data.player.spectator === true) && (gameInfo.userId !== gameInfo.data.player.user.id || (gameInfo.chat && gameInfo.chat.data.userId !== gameInfo.data.player.user.id) || (gameInfo.data.game.status.name !== 'started'))) {
