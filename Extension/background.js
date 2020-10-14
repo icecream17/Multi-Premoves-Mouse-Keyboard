@@ -190,6 +190,7 @@ const checkVersions = () => {
           chrome.storage.local.remove([key], function () { filesObject[key] = undefined; })
         }
       }
+      versionsToSet[key] = {};
       versionsToSet[key].v = updateInfo.versions[key].v;
     }
     if (Object.keys(versionsToSet).length !== 0) {
@@ -218,6 +219,7 @@ const checkUpdates = () => {
         if (item.v > updateInfo.versions[key].v) {
           toUpdate.push({ name: key, url: updateInfo.versions[key].url })
         }
+        versionsToSet[key] = {};
         versionsToSet[key].v = item.v;
       }
     }
