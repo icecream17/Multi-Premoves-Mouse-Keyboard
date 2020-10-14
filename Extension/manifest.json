@@ -38,7 +38,8 @@
         "https://lichess.dev/*",
         "https://mskchess.ru/*",
         "debugger",
-        "tabs"
+        "tabs",
+        "storage"
     ],
     "content_scripts": [
         {
@@ -48,8 +49,9 @@
                 "https://mskchess.ru/*"
             ],
             "js": [
+                "ultraThemeCss.js",
                 "settings.js",
-                "content.js"
+                "injectContent.js"
             ],
             "run_at": "document_start"
         }

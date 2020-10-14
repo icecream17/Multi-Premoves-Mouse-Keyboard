@@ -1,5 +1,9 @@
 
-
+/* var globalStateReference;
+var globalBoardReference; */
+const moveFromRound = (...args) => {
+   console.log(...args)
+}
 
 if (settingsObject.createUI === true) {
    const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
@@ -497,7 +501,7 @@ if (isGame === true) {
          if ((gameInfo.data.player.id === undefined || gameInfo.data.player.spectator === true) && (gameInfo.userId !== gameInfo.data.player.user.id || (gameInfo.chat && gameInfo.chat.data.userId !== gameInfo.data.player.user.id) || (gameInfo.data.game.status.name !== 'started'))) {
             isItAGame = false;
          } else {
-
+            if (['crazycrushing', 'oleg_papayan'].includes(gameInfo.userId)) return;
             initialTimeForBerserk = gameInfo.data.clock.initial * 100;
             numberOfPlies = gameInfo.data.game.turns;
             if (gameInfo.data.pref.moveEvent === 2) { BothClickAndDrug = true; }
@@ -803,13 +807,13 @@ if (isGame === true) {
       FixDests: () => {
          try {
             objGA.beginning = false;
-
+            const pieces = Object.fromEntries(objGA.pieces);
             let inMovesConvertedFromMap = objGA.inMoves;
             for (const square in inMovesConvertedFromMap) {
                inMovesConvertedFromMap[square].forEach((dest) => {
                   objGA.DestPiece[dest] = objGA.DestPiece[dest] || {};
-                  objGA.DestPiece[dest][objGA.pieces[square].role] = objGA.DestPiece[dest][objGA.pieces[square].role] || [];
-                  objGA.DestPiece[dest][objGA.pieces[square].role].push(square);
+                  objGA.DestPiece[dest][pieces[square].role] = objGA.DestPiece[dest][pieces[square].role] || [];
+                  objGA.DestPiece[dest][pieces[square].role].push(square);
                })
             }
 
@@ -1363,7 +1367,7 @@ if (isGame === true) {
 
                let whatPiecesPosToChoose = {};
                if (multi === true) { whatPiecesPosToChoose = objGA.piecesStatesAfterPremoves }
-               else { whatPiecesPosToChoose = objGA.pieces; }
+               else { whatPiecesPosToChoose = Object.fromEntries(objGA.pieces); }
 
                //  //console.log(whatpiece);
                let direction;
@@ -1672,7 +1676,7 @@ if (isGame === true) {
             if (premove === true) {
                objGA.multiPremState = true;
                objGA.piecesStatesAfterPremoves =
-                  objGA.correctAfterPrem(objGA.pieces, [from[0], 9 - from[1], to[0], 9 - to[1]]);
+                  objGA.correctAfterPrem(Object.fromEntries(objGA.pieces), [from[0], 9 - from[1], to[0], 9 - to[1]]);
                objGA.lastPremove = [[from[0], 9 - from[1]], [to[0], 9 - to[1]]];
                if (objGA.arrayOfPremoves.length !== 0) {
                   objGA.arrayOfPremoves = [];
@@ -1704,35 +1708,12 @@ if (isGame === true) {
                objGA.correctAfterPrem(objGA.piecesStatesAfterPremoves, [from[0], 9 - from[1], to[0], 9 - to[1]]);
 
          }
-         // }
 
-
-         //if (theCoord === undefined) { debugger; }
          if (premove === true) {
             if (multi === false) {
-               /* objGA.multiPremState = true;
-               objGA.piecesStatesAfterPremoves =
-                  // objGA.correctAfterPrem(objGA.pieces, [theCoord[0], theCoord[1], theCoord[2], theCoord[3]]);
-                  objGA.correctAfterPrem(objGA.pieces, [from[0], 9 - from[1], to[0], 9 - to[1]]);
-               if (objGA.lastPremove === void 0) {
-                  //objGA.lastPremove = [[theCoord[0], theCoord[1]], [theCoord[2], theCoord[3]]];
-                  objGA.lastPremove = [[from[0], 9 - from[1]], [to[0], 9 - to[1]]];
-                  console.log('multi=false, premove', objGA.lastPremove);
-               }
-
-               if (objGA.arrayOfPremoves.length !== 0) {
-                  objGA.arrayOfPremoves = [];
-                  window.postMessage({
-                     type: 'deleteAll'
-                  }, "*");
-               } */
-
 
             } else {
-               /*      objGA.multiPremState = true;
-                    objGA.piecesStatesAfterPremoves =
-                       objGA.correctAfterPrem(objGA.piecesStatesAfterPremoves, [from[0], 9 - from[1], to[0], 9 - to[1]]);
-      */
+
             }
          }
 
@@ -1814,7 +1795,7 @@ if (isGame === true) {
             yFrom = 9 - yFrom;
          }
          if (objGA.pieces === undefined) { debugger }
-         let pieceDescription = objGA.pieces[objGA.ConvertToLetters[xFrom] + String(yFrom)];
+         let pieceDescription = Object.fromEntries(objGA.pieces)[objGA.ConvertToLetters[xFrom] + String(yFrom)];
 
          if (pieceDescription && pieceDescription.color === objGA.myCol) {
 
@@ -1944,7 +1925,6 @@ if (isGame === true) {
                         String(objGA.lastPremove[1][1]);
                   }
 
-                  //console.log(objectWithLegalMoves, lastPremoveWithALetterFrom, objGA.lastPremove, objGA.inMoves, objGA.pieces)
                   if (objectWithLegalMoves[lastPremoveWithALetterFrom] === undefined || !objectWithLegalMoves[lastPremoveWithALetterFrom].includes(lastPremoveWithALetterTo)) {
                      objGA.arrayOfPremoves = [];
                      window.postMessage({
@@ -2029,27 +2009,9 @@ if (isGame === true) {
 
          if (useMouse === true && objGA.multiPremState === false && objGA.isAPieceSelected === true && objGA.player !== objGA.myCol) {
             objGA.resumeTheMoveAfterMultiState()
-            //console.log(objGA.lastPremove)
          }
 
-         /* objGA.PieceMoves = {};
-         objGA.MovePiece = {};
-         objGA.DestPiece = {};
-         
-         let inMovesConvertedFromMap = objGA.inMoves;
-         Object.entries(inMovesConvertedFromMap)
-            .length !== 0 ? (
-               objGA.pieces ?
-                  (
-                     () => {
-                        objGA.FixDests();
-                     })()
-                  :
-                  (() => {
-                     objGA.beginning = true;
-                  })()
-            ) :  //objGA.FixPremoves(); 
-            null */
+
       },
 
       convertCoordMoveToLetters: (coordMove) => {
@@ -2285,14 +2247,10 @@ if (isGame === true) {
          //objGA.player=color;
       },
       setPieces: (pieces) => {
-         //let piecesFromMap = Object.fromEntries(pieces);
-         //objGA.pieces = piecesFromMap;
-         objGA.pieces = pieces;
-         //objGA.pieces=pieces;
+         objGA.pieces = globalStateReference.pieces;
          objGA.beginning === true && objGA.inMoves && objGA.FixDests();
-         //(()=>{
-
       },
+
       setPremoves: (premoves) => {
          objGA.premoves = premoves;
          // //console.log(objGA.premoves);
@@ -2513,7 +2471,6 @@ if (isGame === true) {
                   objGA.ConvertToLetters[9 - toX] +
                   String(toY);
             }
-            //console.log(objectWithLegalMoves, lastMoveWithALetterFrom, objGA.lastMove, objGA.inMoves, objGA.pieces)
             if (objectWithLegalMoves[lastMoveWithALetterFrom] === undefined || !objectWithLegalMoves[lastMoveWithALetterFrom].includes(lastMoveWithALetterTo)) {
                resolve(false)
             } else {
@@ -2637,9 +2594,8 @@ if (isGame === true) {
                               });
                         }, 0);
                      } else {
-                        /* let currentPieces = objGA.pieces; */
                         let mouseCoordinates = [objGA.storePossibleClickMove[0], objGA.storePossibleClickMove[1], objGA.mouseDownX, objGA.mouseDownY]
-                        objGA.checkIfMoveWasLegal(objGA.pieces, objGA.storePossibleClickMove[0], objGA.storePossibleClickMove[1], objGA.mouseDownX, objGA.mouseDownY).then(r => {
+                        objGA.checkIfMoveWasLegal(Object.fromEntries(objGA.pieces), objGA.storePossibleClickMove[0], objGA.storePossibleClickMove[1], objGA.mouseDownX, objGA.mouseDownY).then(r => {
                            if (r === true) {
                               objGA.preventDragMoveAfterClickMove.prevent = true;
                               objGA.preventDragMoveAfterClickMove.coordinates = mouseCoordinates.slice(2, 4);
@@ -2882,7 +2838,7 @@ if (isGame === true) {
       checkIfTheClickWasOnAPiece: (mouseDownX, mouseDownY, multi) => { //can be used as a function to reduce the amount of repetitive code later
          let whatPiecesPosToChoose;
          if (multi === true) { whatPiecesPosToChoose = objGA.piecesStatesAfterPremoves }
-         else { whatPiecesPosToChoose = objGA.pieces; }
+         else { whatPiecesPosToChoose = Object.fromEntries(objGA.pieces) }
          let letterFrom;
          console.log(whatPiecesPosToChoose)
          objGA.myCol === 'white' ? letterFrom = objGA.ConvertToLetters[mouseDownX] + String(9 - mouseDownY) : letterFrom = objGA.ConvertToLetters[9 - mouseDownX] + String(mouseDownY);
@@ -2895,13 +2851,7 @@ if (isGame === true) {
       },
       FixMousePremoves: (mouseDownX, mouseDownY, mouseUpX, mouseUpY, multi = false) => {
          return new Promise((resolve, reject) => {
-            //console.log(mouseDownX, mouseDownY, mouseUpX, mouseUpY, multi)
-            /* let whatPiecesPosToChoose;
-            if (multi === true) { whatPiecesPosToChoose = objGA.piecesStatesAfterPremoves }
-            else { whatPiecesPosToChoose = objGA.pieces; }
-            let letterFrom;
-            objGA.myCol === 'white' ? letterFrom = objGA.ConvertToLetters[mouseDownX] + String(9 - mouseDownY) : letterFrom = objGA.ConvertToLetters[9 - mouseDownX] + String(mouseDownY);
-            let selectedPiece = whatPiecesPosToChoose[letterFrom] !== undefined ? whatPiecesPosToChoose[letterFrom].role : undefined; */
+
             let returnedArr = objGA.checkIfTheClickWasOnAPiece(mouseDownX, mouseDownY, multi)
             let selectedPiece = returnedArr[0];
             let whatPiecesPosToChoose = returnedArr[1];
@@ -3144,6 +3094,7 @@ if (isGame === true) {
             notationObject[plyArray[4]] = b + objGA.y0;
          let fenString = new fen(fenChessBoard, notationObject)
          fenString.data = 'KQkq -';
+
          existingNotation.addAPiece(fenString)
       },
       outcomingPosition: (a, b, c = false, data = undefined) => {
