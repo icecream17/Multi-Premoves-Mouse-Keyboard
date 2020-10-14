@@ -317,14 +317,22 @@ if (isGame === true) {
                 script.onload = function () {
                     this.remove();
                 };
+
                 (document.head || document.documentElement).appendChild(script);
+
             } else {
                 script.textContent = result.script;
                 script.onload = function () {
                     this.remove();
                 };
-                (document.head || document.documentElement).appendChild(script);
-            } 
+                
+                settingsjs.onload = function () {
+                    (document.head || document.documentElement).appendChild(script);
+                    this.remove();
+                };
+
+
+            }
 
         })
 
