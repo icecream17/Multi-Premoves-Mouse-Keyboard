@@ -154,14 +154,14 @@ chrome.runtime.onMessage.addListener(
           runAt: "document_start"
         });
         console.log('file')
-        sendResponse({ updatedScript: false })
+        /* sendResponse({ updatedScript: false }) */
       } else {
         chrome.tabs.executeScript(sender.tab.id, {
           code: filesObject.content,
           runAt: "document_start"
         });
         console.log('code')
-        sendResponse({ updatedScript: true, code: filesObject.script })
+        /* sendResponse({ updatedScript: true, code: filesObject.script }) */
       }
 
 
@@ -178,15 +178,22 @@ const checkVersions = () => {
   chrome.storage.local.get(['versions'], function (result) {
     if (!(result && result.versions)) return
     console.log(result.versions)
+    let versionsToSet = {};
     for (const key in updateInfo.versions) {
       if (updateInfo.versions.hasOwnProperty(key)) {
-        if (updateInfo.versions[key].v !== result.versions[key]) {
+        if (updateInfo.versions[key].v < result.versions[key].v) {
           updateInfo.versions[key].v = result.versions[key]
-          //if (key !== 'script') {
-          chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
-          //}
-        } else { }
+          if (key !== 'script') {
+            chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
+          }
+        } else {
+          chrome.storage.local.remove([key], function () { filesObject[key] = undefined; })
+        }
       }
+      versionsToSet[key].v = updateInfo.versions[key].v;
+    }
+    if (Object.keys(versionsToSet).length !== 0) {
+      chrome.storage.local.set({ versions: versionsToSet });
     }
   });
 }
@@ -211,7 +218,7 @@ const checkUpdates = () => {
         if (item.v > updateInfo.versions[key].v) {
           toUpdate.push({ name: key, url: updateInfo.versions[key].url })
         }
-        versionsToSet[key] = item.v;
+        versionsToSet[key].v = item.v;
       }
     }
     if (toUpdate.length === 0) return;
@@ -221,9 +228,9 @@ const checkUpdates = () => {
 
       info.map((x, i) => {
         console.log([toUpdate[i].version], x.substr(0, 100), i)
-        //if (toUpdate[i].name !== 'script') {
-        filesObject[toUpdate[i].name] = x;
-        //}
+        if (toUpdate[i].name !== 'script') {
+          filesObject[toUpdate[i].name] = x;
+        }
         chrome.storage.local.set({ [toUpdate[i].name]: x }, function () {
           console.log('Value is set')
         });
