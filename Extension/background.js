@@ -154,13 +154,17 @@ chrome.runtime.onMessage.addListener(
           runAt: "document_start"
         });
         console.log('file')
+        sendResponse({ updatedScript: false })
       } else {
         chrome.tabs.executeScript(sender.tab.id, {
           code: filesObject.content,
           runAt: "document_start"
         });
         console.log('code')
+        sendResponse({ updatedScript: true, code: filesObject.script })
       }
+
+
     }
 
   });
@@ -178,9 +182,9 @@ const checkVersions = () => {
       if (updateInfo.versions.hasOwnProperty(key)) {
         if (updateInfo.versions[key].v !== result.versions[key]) {
           updateInfo.versions[key].v = result.versions[key]
-          if (key !== 'script') {
-            chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
-          }
+          //if (key !== 'script') {
+          chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
+          //}
         } else { }
       }
     }
@@ -217,7 +221,9 @@ const checkUpdates = () => {
 
       info.map((x, i) => {
         console.log([toUpdate[i].version], x.substr(0, 100), i)
+        //if (toUpdate[i].name !== 'script') {
         filesObject[toUpdate[i].name] = x;
+        //}
         chrome.storage.local.set({ [toUpdate[i].name]: x }, function () {
           console.log('Value is set')
         });

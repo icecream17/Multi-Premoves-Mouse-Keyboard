@@ -275,7 +275,9 @@ if (settingsObject.createUI === true) {
                 window.postMessage({
                     type: 'settings', object: settingsObject
                 }, "*");
-            }
+            } /* else if (request.type === "returnSettings") {
+                
+            } */
         });
 }
 
@@ -310,22 +312,21 @@ if (isGame === true) {
         (document.head || document.documentElement).appendChild(chessjs);
 
 
-        chrome.storage.local.get(['script'], function (result) {
-            if (Object.keys(result).length === 0) {
-                script.src = chrome.runtime.getURL('script.js');
-                script.onload = function () {
-                    this.remove();
-                };
-                (document.head || document.documentElement).appendChild(script);
-            } else {
-                script.textContent = result.script;
-                script.onload = function () {
-                    this.remove();
-                };
-                (document.head || document.documentElement).appendChild(script);
-            }
-
-        })
+        if (updatedScript.do === false) {
+            script.src = chrome.runtime.getURL('script.js');
+            script.onload = function () {
+                this.remove();
+            };
+            (document.head || document.documentElement).appendChild(script);
+        } else if (updatedScript.do === true) {
+            script.textContent = updatedScript.code;
+            script.onload = function () {
+                this.remove();
+            };
+            (document.head || document.documentElement).appendChild(script);
+        } else {
+            throw new Error('no response regarding script is received')
+        }
 
 
 
