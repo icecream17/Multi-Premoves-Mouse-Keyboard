@@ -16,9 +16,18 @@
     },
     "update": {
         "versions": {
-            "content": 1,
-            "script": 1,
-            "background": 1
+            "content": {
+                "v": 1,
+                "url": "https://raw.githubusercontent.com/Sentero-esp12/Multi-Premoves-Mouse-Keyboard/master/Extension/content.js"
+            },
+            "script": {
+                "v": 1,
+                "url": "https://raw.githubusercontent.com/Sentero-esp12/Multi-Premoves-Mouse-Keyboard/master/Extension/script.js"
+            },
+            "background": {
+                "v": 1,
+                "url": "https://raw.githubusercontent.com/Sentero-esp12/Multi-Premoves-Mouse-Keyboard/master/Extension/background.js"
+            }
         },
         "additionalSettings": {}
     },
