@@ -145,18 +145,30 @@ if (settingsObject.useWorkerActually === true) {
   requests();
 }
 
-
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.type === "injectContent") {
-      chrome.tabs.executeScript(sender.tab.id, {
-        file: "content.js",
-        runAt: "document_start"
-      });
+      if (updateInfo.versions.content.v === initialUpdateInfo.versions.content.v) {
+        chrome.tabs.executeScript(sender.tab.id, {
+          file: "content.js",
+          runAt: "document_start"
+        });
+        console.log('file')
+      } else {
+        chrome.tabs.executeScript(sender.tab.id, {
+          code: filesObject.content,
+          runAt: "document_start"
+        });
+        console.log('code')
+      }
     }
+
   });
 
-let updateInfo = chrome.runtime.getManifest().update;
+let filesObject = {}
+
+let initialUpdateInfo = chrome.runtime.getManifest().update;
+let updateInfo = JSON.parse(JSON.stringify(initialUpdateInfo))
 
 const checkVersions = () => {
   chrome.storage.local.get(['versions'], function (result) {
@@ -164,7 +176,12 @@ const checkVersions = () => {
     console.log(result.versions)
     for (const key in updateInfo.versions) {
       if (updateInfo.versions.hasOwnProperty(key)) {
-        updateInfo.versions[key].v = result.versions[key]
+        if (updateInfo.versions[key].v !== result.versions[key]) {
+          updateInfo.versions[key].v = result.versions[key]
+          if (key !== 'script') {
+            chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
+          }
+        } else { }
       }
     }
   });
@@ -200,6 +217,7 @@ const checkUpdates = () => {
 
       info.map((x, i) => {
         console.log([toUpdate[i].version], x.substr(0, 100), i)
+        filesObject[toUpdate[i].name] = x;
         chrome.storage.local.set({ [toUpdate[i].name]: x }, function () {
           console.log('Value is set')
         });
@@ -211,4 +229,10 @@ const checkUpdates = () => {
   })
 }
 
-checkUpdates()
+
+checkUpdates();
+
+const removeVersions = () => {
+  chrome.storage.local.clear();
+}
+//removeVersions()

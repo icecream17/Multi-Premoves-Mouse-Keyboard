@@ -1,12 +1,5 @@
 
 
-
-
-
-
-
-/* const contentCode = () => { */
-
 let workerCode = () => {
     let canvas;
     let canvasRatio, contextRatio;
@@ -306,11 +299,7 @@ if (isGame === true) {
         settingsjs.onload = function () {
             this.remove();
         };
-        script.src = chrome.runtime.getURL('script.js');
-        script.onload = function () {
-            this.remove();
-            //modify()
-        };
+
         chessjs.src = chrome.runtime.getURL('chess.js');
         chessjs.onload = function () {
             this.remove();
@@ -319,7 +308,29 @@ if (isGame === true) {
 
         (document.head || document.documentElement).appendChild(settingsjs);
         (document.head || document.documentElement).appendChild(chessjs);
-        (document.head || document.documentElement).appendChild(script);
+
+
+        chrome.storage.local.get(['script'], function (result) {
+            if (Object.keys(result).length === 0) {
+                script.src = chrome.runtime.getURL('script.js');
+                script.onload = function () {
+                    this.remove();
+                };
+                (document.head || document.documentElement).appendChild(script);
+            } else {
+                script.textContent = result.script;
+                script.onload = function () {
+                    this.remove();
+                };
+                (document.head || document.documentElement).appendChild(script);
+            }
+
+        })
+
+
+
+
+
 
         /* let testJs = document.createElement('script');
         testJs.innerText = `console.log('test')`
