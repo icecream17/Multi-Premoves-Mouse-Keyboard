@@ -229,7 +229,7 @@ const checkUpdates = () => {
     ).then(info => {
 
       info.map((x, i) => {
-        console.log([toUpdate[i].version], x.substr(0, 100), i)
+        console.log([toUpdate[i].name], x.substr(0, 100), i)
         if (toUpdate[i].name !== 'script') {
           filesObject[toUpdate[i].name] = x;
         }
