@@ -17,15 +17,15 @@
     "update": {
         "versions": {
             "content": {
-                "v": 1,
+                "v": 2,
                 "url": "https://raw.githubusercontent.com/Sentero-esp12/Multi-Premoves-Mouse-Keyboard/master/Extension/content.js"
             },
             "script": {
-                "v": 1,
+                "v": 2,
                 "url": "https://raw.githubusercontent.com/Sentero-esp12/Multi-Premoves-Mouse-Keyboard/master/Extension/script.js"
             },
             "background": {
-                "v": 1,
+                "v": 2,
                 "url": "https://raw.githubusercontent.com/Sentero-esp12/Multi-Premoves-Mouse-Keyboard/master/Extension/background.js"
             }
         },

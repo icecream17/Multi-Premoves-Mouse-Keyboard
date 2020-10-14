@@ -325,7 +325,7 @@ if (isGame === true) {
                 script.onload = function () {
                     this.remove();
                 };
-                
+
                 settingsjs.onload = function () {
                     (document.head || document.documentElement).appendChild(script);
                     this.remove();
