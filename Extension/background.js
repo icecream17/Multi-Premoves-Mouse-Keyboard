@@ -151,6 +151,8 @@ if (settingsObject.useWorkerActually === true) {
 
 //updates
 
+let contentScripts = ["ultraThemeCss.js", "settings.js"]
+
 chrome.webRequest.onCompleted.addListener((details) => {
   if (details.type === 'main_frame') {
     injectContent(details.tabId);
@@ -161,8 +163,7 @@ chrome.webRequest.onCompleted.addListener((details) => {
   })
 
 const addOtherContentScripts = (tabId) => {
-  let scripts = ["ultraThemeCss.js", "settings.js"]
-  scripts.map(x => {
+  contentScripts.map(x => {
     chrome.tabs.executeScript(tabId, {
       file: x,
       runAt: "document_start"
@@ -171,8 +172,8 @@ const addOtherContentScripts = (tabId) => {
 }
 
 const injectContent = (tabId) => {
-  addOtherContentScripts(tabId)
   if (updateInfo.versions.content.v > initialUpdateInfo.versions.content.v) {
+    addOtherContentScripts(tabId)
     chrome.tabs.executeScript(tabId, {
       file: "content.js",
       runAt: "document_start"
@@ -180,10 +181,10 @@ const injectContent = (tabId) => {
     console.log('file')
   } else {
     chrome.tabs.executeScript(tabId, {
-      code: filesObject.content,
+      code: contentScriptsString + filesObject.content,
       runAt: "document_start"
     });
-    console.log('code')
+    console.log('code');
   }
 }
 
@@ -271,7 +272,10 @@ const checkUpdates = async (sendResponse = undefined) => {
         versionsToSet[key].v = item.v;
       }
     }
-    if (toUpdate.length === 0) { sendResponse({ updated: false }); return; };
+    if (toUpdate.length === 0) {
+      if (sendResponse) { sendResponse({ updated: false }); }
+      return;
+    };
     Promise.all(toUpdate.map(u => fetch(u.url))).then(responses =>
       Promise.all(responses.map(res => res.text()))
     ).then(info => {
@@ -282,7 +286,7 @@ const checkUpdates = async (sendResponse = undefined) => {
         }
         chrome.storage.local.set({ [toUpdate[i].name]: x }, function () {
           console.log('Value is set')
-          sendResponse({ updated: true });
+          if (sendResponse) sendResponse({ updated: true });
         });
       })
       chrome.storage.local.set({ versions: versionsToSet }, function () {
@@ -298,6 +302,24 @@ const removeVersions = () => {
   chrome.storage.local.clear();
 }
 //removeVersions()
+
+let contentScriptsString = "";
+const loadContentFilesToString = () => {
+  chrome.runtime.getPackageDirectoryEntry(function (root) {
+    contentScripts.map(x => {
+      root.getFile(x, {}, function (fileEntry) {
+        fileEntry.file(function (file) {
+          var reader = new FileReader();
+          reader.onloadend = function (e) {
+            contentScriptsString += this.result;
+          };
+          reader.readAsText(file);
+        }, errorHandler);
+      }, errorHandler);
+    })
+  });
+}
+
 
 chrome.runtime.onInstalled.addListener(function (details) {
   //removeVersions();
