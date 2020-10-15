@@ -131,6 +131,7 @@ if (settingsObject.createUI === true) {
                      <div>
                      <button id="save" class="button">Save</button>
                         <button id="saveReload" class="button">Reload</button>
+                        <button id="update" class="button">Update</button>
                         <div id="notification"></div>
                      <div id="allSettings">
                         <div id="basic">
@@ -301,6 +302,13 @@ transition: all 0.2s;
                               chrome.tabs.reload(); reloadRequired = false;
                               notification.innerText = "";
                               settingsUnchanged = Object.assign({}, settingsObject)
+                           } else if (clickedEl.id === 'update') {
+                              chrome.runtime.sendMessage({ type: "checkUpdates" }, (r) => {
+                                 if (r.updated === true) { clickedEl.innerText = 'Updated' }
+                                 else {
+                                    clickedEl.innerText = 'Latest version'
+                                 }
+                              });
                            }
                      } else if (clickedEl.getAttribute('setting') === 'useKeyboard') {
                         settingsObject.useKeyboard === true ?

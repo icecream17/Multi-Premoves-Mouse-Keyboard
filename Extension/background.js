@@ -145,6 +145,11 @@ if (settingsObject.useWorkerActually === true) {
   requests();
 }
 
+
+
+
+//updates
+
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.type === "injectContent") {
@@ -154,62 +159,69 @@ chrome.runtime.onMessage.addListener(
           runAt: "document_start"
         });
         console.log('file')
-        /* sendResponse({ updatedScript: false }) */
       } else {
         chrome.tabs.executeScript(sender.tab.id, {
           code: filesObject.content,
           runAt: "document_start"
         });
         console.log('code')
-        /* sendResponse({ updatedScript: true, code: filesObject.script }) */
       }
-
-
+    } else if (request.type === "checkUpdates") {
+      checkUpdates(sendResponse);
+      return true;
     }
-
   });
 
 let filesObject = {}
-
 let initialUpdateInfo = chrome.runtime.getManifest().update;
 let updateInfo = JSON.parse(JSON.stringify(initialUpdateInfo))
 
 const checkVersions = () => {
-  chrome.storage.local.get(['versions'], function (result) {
-    if (!(result && result.versions)) return
-    console.log(result.versions)
-    let versionsToSet = {};
-    for (const key in updateInfo.versions) {
-      if (updateInfo.versions.hasOwnProperty(key)) {
-        if (updateInfo.versions[key].v < result.versions[key].v) {
-          updateInfo.versions[key].v = result.versions[key]
-          if (key !== 'script') {
-            chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
-          }
-        } else {
-          chrome.storage.local.remove([key], function () { filesObject[key] = undefined; })
-        }
+  checkVersionsHasBeenCalled = true;
+  return new Promise((res, rej) => {
+    chrome.storage.local.get(['versions'], function (result) {
+      if (!(result && result.versions)) {
+        //checkUpdates();
+        return;
       }
-      versionsToSet[key] = {};
-      versionsToSet[key].v = updateInfo.versions[key].v;
-    }
-    if (Object.keys(versionsToSet).length !== 0) {
-      chrome.storage.local.set({ versions: versionsToSet });
-    }
-  });
+      console.log(result.versions)
+      let versionsToSet = {};
+      for (const key in updateInfo.versions) {
+        if (updateInfo.versions.hasOwnProperty(key)) {
+          if (updateInfo.versions[key].v < result.versions[key].v) {
+            updateInfo.versions[key].v = result.versions[key]
+            if (key !== 'script') {
+              chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
+            }
+          } else {
+            chrome.storage.local.remove([key], function () { delete filesObject[key] })
+          }
+        }
+        versionsToSet[key] = {};
+        versionsToSet[key].v = updateInfo.versions[key].v;
+      }
+      if (Object.keys(versionsToSet).length !== 0) {
+        chrome.storage.local.set({ versions: versionsToSet });
+      }
+    });
+  })
 }
-checkVersions()
+
+let checkVersionsHasBeenCalled = false;
 //console.log(updateInfo)
 let updateJsUrls = {
   manifest: 'https://raw.githubusercontent.com/Sentero-esp12/Multi-Premoves-Mouse-Keyboard/master/Extension/manifest.json'
 }
 
-const checkUpdates = () => {
+const checkUpdates = async (sendResponse = undefined) => {
+  if (checkVersionsHasBeenCalled === false) {
+    await checkVersions();
+  }
   let versionsToSet = {};
   Promise.all([updateJsUrls.manifest].map(u => fetch(u))).then(responses =>
     Promise.all(responses.map(res => res.text()))
   ).then(info => {
-    let updateObject = JSON.parse(info[0]).update
+    let updateObject = JSON.parse(info[0]).update;
     let versions = updateObject.versions
     console.log(updateObject)
     let toUpdate = [];
@@ -223,11 +235,10 @@ const checkUpdates = () => {
         versionsToSet[key].v = item.v;
       }
     }
-    if (toUpdate.length === 0) return;
+    if (toUpdate.length === 0) { sendResponse({ updated: false }); return; };
     Promise.all(toUpdate.map(u => fetch(u.url))).then(responses =>
       Promise.all(responses.map(res => res.text()))
     ).then(info => {
-
       info.map((x, i) => {
         console.log([toUpdate[i].name], x.substr(0, 100), i)
         if (toUpdate[i].name !== 'script') {
@@ -235,6 +246,7 @@ const checkUpdates = () => {
         }
         chrome.storage.local.set({ [toUpdate[i].name]: x }, function () {
           console.log('Value is set')
+          sendResponse({ updated: true });
         });
       })
       chrome.storage.local.set({ versions: versionsToSet }, function () {
@@ -244,10 +256,17 @@ const checkUpdates = () => {
   })
 }
 
-
-checkUpdates();
+//checkUpdates();
 
 const removeVersions = () => {
   chrome.storage.local.clear();
 }
 //removeVersions()
+
+chrome.runtime.onInstalled.addListener(function (details) {
+  //removeVersions();
+  checkUpdates();
+  console.log('onInstalled')
+})
+
+//checkVersions()
