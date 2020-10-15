@@ -172,7 +172,7 @@ const addOtherContentScripts = (tabId) => {
 
 const injectContent = (tabId) => {
   addOtherContentScripts(tabId)
-  if (updateInfo.versions.content.v === initialUpdateInfo.versions.content.v) {
+  if (updateInfo.versions.content.v > initialUpdateInfo.versions.content.v) {
     chrome.tabs.executeScript(tabId, {
       file: "content.js",
       runAt: "document_start"
@@ -208,6 +208,7 @@ const checkVersions = () => {
     chrome.storage.local.get(['versions'], function (result) {
       if (!(result && result.versions)) {
         //checkUpdates();
+        res();
         return;
       }
       console.log(result.versions)
@@ -235,6 +236,9 @@ const checkVersions = () => {
       } else {
         chrome.storage.local.remove(['versions'])
       }
+      setTimeout(() => {
+        res();
+      }, 200);
     });
   })
 }
