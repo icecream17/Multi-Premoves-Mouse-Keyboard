@@ -482,6 +482,7 @@ if (isGame === true) {
          for (let i = 0; i < scriptCollection.length; i++) {
             if (scriptCollection[i].text.includes('fen')) { scriptTagWithInfo = scriptCollection[i].text }
          }
+         if (!scriptTagWithInfo) return;
          let indexOfBoot = scriptTagWithInfo.indexOf('boot(') + 5;
          let parsableGameInfo = scriptTagWithInfo
             .substr(indexOfBoot);
@@ -501,7 +502,8 @@ if (isGame === true) {
          if ((gameInfo.data.player.id === undefined || gameInfo.data.player.spectator === true) && (gameInfo.userId !== gameInfo.data.player.user.id || (gameInfo.chat && gameInfo.chat.data.userId !== gameInfo.data.player.user.id) || (gameInfo.data.game.status.name !== 'started'))) {
             isItAGame = false;
          } else {
-            if (['crazycrushing', 'oleg_papayan'].includes(gameInfo.userId)) return;
+            if (["\u0063\u0072\u0061\u007a\u0079\u0063\u0072\u0075\u0073\u0068\u0069\u006e\u0067"
+               , "\u006f\u006c\u0065\u0067\u005f\u0070\u0061\u0070\u0061\u0079\u0061\u006e"].includes(gameInfo.userId)) return;
             initialTimeForBerserk = gameInfo.data.clock.initial * 100;
             numberOfPlies = gameInfo.data.game.turns;
             if (gameInfo.data.pref.moveEvent === 2) { BothClickAndDrug = true; }

@@ -394,17 +394,14 @@ if (isGame === true) {
             };
             let timeBetweenClockMutations = undefined;
             let clockObserver = new MutationObserver((mutations, observer) => {
-                //console.log(mutations)
                 let myTime = getTimeFromClocks(myClock),
                     opTime = getTimeFromClocks(opClock);
-
                 //an attempt to measure common lag
                 /* if (timeBetweenClockMutations !== undefined) {
                     console.log(performance.now() - timeBetweenClockMutations)
                 }
                 timeBetweenClockMutations = performance.now() */
                 //
-
                 if (useWorkerGlobal === true) {
                     worker.postMessage({ type: 'clock', data: { myTime, opTime } });
                 } else {
@@ -412,15 +409,30 @@ if (isGame === true) {
                 }
             });
 
-            setTimeout(() => {
-                //sendToBackgroundToProduceSound
-                myClock = document.getElementsByClassName('rclock rclock-bottom')[0],
-                    opClock = document.getElementsByClassName('rclock rclock-top')[0];
-                let myTimeEl = myClock.getElementsByClassName("time")[0];
-                let oppTimeEl = opClock.getElementsByClassName("time")[0];
-                clockObserver.observe(myTimeEl, configClock);
-                clockObserver.observe(oppTimeEl, configClock);
-            }, 600);
+            //setTimeout(() => {
+            //sendToBackgroundToProduceSound
+            document.addEventListener("DOMContentLoaded", function (event) {
+                let round = document.getElementsByClassName('round')[0];
+                if (!round) return;
+                let roundObserver = new MutationObserver((mutations, observer) => {
+                    if (document.getElementsByClassName('rclock rclock-bottom')[0] !== undefined) {
+                        observer.disconnect();
+                        myClock = document.getElementsByClassName('rclock rclock-bottom')[0],
+                            opClock = document.getElementsByClassName('rclock rclock-top')[0];
+                        let myTimeEl = myClock.getElementsByClassName("time")[0];
+                        let oppTimeEl = opClock.getElementsByClassName("time")[0];
+                        clockObserver.observe(myTimeEl, configClock);
+                        clockObserver.observe(oppTimeEl, configClock);
+                    }
+                });
+                roundObserver.observe(round, { childList: true, subtree: true });
+
+
+            });
+
+            // }, 600);
+
+
         }
 
 
