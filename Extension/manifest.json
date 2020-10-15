@@ -41,21 +41,6 @@
         "tabs",
         "storage"
     ],
-    /* "content_scripts": [
-        {
-            "matches": [
-                "https://lichess.org/*",
-                "https://lichess.dev/*",
-                "https://mskchess.ru/*"
-            ],
-            "js": [
-                "ultraThemeCss.js",
-                "settings.js",
-                "injectContent.js"
-            ],
-            "run_at": "document_start"
-        }
-    ], */
     "web_accessible_resources": [
         "settings.js",
         "chess.js",
