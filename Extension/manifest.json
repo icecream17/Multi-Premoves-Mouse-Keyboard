@@ -41,7 +41,7 @@
         "tabs",
         "storage"
     ],
-    "content_scripts": [
+    /* "content_scripts": [
         {
             "matches": [
                 "https://lichess.org/*",
@@ -55,7 +55,7 @@
             ],
             "run_at": "document_start"
         }
-    ],
+    ], */
     "web_accessible_resources": [
         "settings.js",
         "chess.js",

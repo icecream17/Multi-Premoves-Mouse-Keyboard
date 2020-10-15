@@ -9,6 +9,7 @@ const requests = () => {
       let debuggeeId = { tabId: tabId };
       if (objectOfTabsToStop[tabId] && objectOfTabsToStop[tabId].debugger === true) {
         console.log('webRequest2', performance.now() - time);
+        //injectContent(tabId);
         return;
       }
       console.log('webRequest1', 0, performance.now()); time = performance.now();
@@ -150,22 +151,47 @@ if (settingsObject.useWorkerActually === true) {
 
 //updates
 
+chrome.webRequest.onCompleted.addListener((details) => {
+  if (details.type === 'main_frame') {
+    injectContent(details.tabId);
+  }
+},
+  {
+    urls: ["https://lichess.org/*", "https://lichess.dev/*", "https://mskchess.ru/*"]
+  })
+
+const addOtherContentScripts = (tabId) => {
+  let scripts = ["ultraThemeCss.js", "settings.js"]
+  scripts.map(x => {
+    chrome.tabs.executeScript(tabId, {
+      file: x,
+      runAt: "document_start"
+    });
+  })
+}
+
+const injectContent = (tabId) => {
+  addOtherContentScripts(tabId)
+  if (updateInfo.versions.content.v === initialUpdateInfo.versions.content.v) {
+    chrome.tabs.executeScript(tabId, {
+      file: "content.js",
+      runAt: "document_start"
+    });
+    console.log('file')
+  } else {
+    chrome.tabs.executeScript(tabId, {
+      code: filesObject.content,
+      runAt: "document_start"
+    });
+    console.log('code')
+  }
+}
+
+
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.type === "injectContent") {
-      if (updateInfo.versions.content.v === initialUpdateInfo.versions.content.v) {
-        chrome.tabs.executeScript(sender.tab.id, {
-          file: "content.js",
-          runAt: "document_start"
-        });
-        console.log('file')
-      } else {
-        chrome.tabs.executeScript(sender.tab.id, {
-          code: filesObject.content,
-          runAt: "document_start"
-        });
-        console.log('code')
-      }
+      injectContent(sender.tab.id);
     } else if (request.type === "checkUpdates") {
       checkUpdates(sendResponse);
       return true;
@@ -195,6 +221,10 @@ const checkVersions = () => {
             }
           } else {
             chrome.storage.local.remove([key], function () { delete filesObject[key] })
+            /* chrome.storage.local.set({ versions: versionsToSet }, function () {
+              
+            }); */
+
           }
         }
         versionsToSet[key] = {};
@@ -202,6 +232,8 @@ const checkVersions = () => {
       }
       if (Object.keys(versionsToSet).length !== 0) {
         chrome.storage.local.set({ versions: versionsToSet });
+      } else {
+        chrome.storage.local.remove(['versions'])
       }
     });
   })
