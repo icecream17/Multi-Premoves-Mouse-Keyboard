@@ -172,7 +172,7 @@ const addOtherContentScripts = (tabId) => {
 }
 
 const injectContent = (tabId) => {
-  if (updateInfo.versions.content.v > initialUpdateInfo.versions.content.v) {
+  if (updateInfo.versions.content.v <= initialUpdateInfo.versions.content.v) {
     addOtherContentScripts(tabId)
     chrome.tabs.executeScript(tabId, {
       file: "content.js",
@@ -213,30 +213,26 @@ const checkVersions = () => {
         return;
       }
       console.log(result.versions)
-      let versionsToSet = {};
+      let versionsToSet = result.versions;
       for (const key in updateInfo.versions) {
         if (updateInfo.versions.hasOwnProperty(key)) {
+          if (!result.versions[key]) return;
           if (updateInfo.versions[key].v < result.versions[key].v) {
-            updateInfo.versions[key].v = result.versions[key]
+            updateInfo.versions[key].v = result.versions[key].v
+            versionsToSet[key].v = result.versions[key].v
             if (key !== 'script') {
-              chrome.storage.local.get([key], function (result) { filesObject[key] = result[key] })
+              chrome.storage.local.get([key], function (result) {
+                if (!result[key]) return;
+                filesObject[key] = result[key]
+              })
             }
           } else {
             chrome.storage.local.remove([key], function () { delete filesObject[key] })
-            /* chrome.storage.local.set({ versions: versionsToSet }, function () {
-              
-            }); */
-
+            delete versionsToSet[key];
           }
         }
-        versionsToSet[key] = {};
-        versionsToSet[key].v = updateInfo.versions[key].v;
       }
-      if (Object.keys(versionsToSet).length !== 0) {
-        chrome.storage.local.set({ versions: versionsToSet });
-      } else {
-        chrome.storage.local.remove(['versions'])
-      }
+      chrome.storage.local.set({ versions: versionsToSet });
       setTimeout(() => {
         res();
       }, 200);
@@ -314,12 +310,42 @@ const loadContentFilesToString = () => {
             contentScriptsString += this.result;
           };
           reader.readAsText(file);
-        }, errorHandler);
-      }, errorHandler);
+        }, () => { console.log('err') });
+      }, () => { console.log('err') });
     })
   });
 }
+loadContentFilesToString();
 
+const errorHandler = (err) => {
+  console.log(err)
+}
+
+/* //testFileWrite()
+const testFileWrite = () => {
+
+  navigator.webkitPersistentStorage.requestQuota(1024 * 1024,
+    function (grantedBytes) {
+      function onInitFs(fs) {
+        fs.root.getFile('log.txt', { create: true }, function (fileEntry) {
+          // Create a FileWriter object for our FileEntry (log.txt).
+          fileEntry.createWriter(function (fileWriter) {
+            fileWriter.onwriteend = function (e) {
+              console.log('Write completed.');
+            };
+            fileWriter.onerror = function (e) {
+              console.log('Write failed: ' + e.toString());
+            };
+            // Create a new Blob and write it to log.txt.
+            var blob = new Blob(['Lorem Ipsum'], { type: 'text/plain' });
+            fileWriter.write(blob);
+          }, errorHandler);
+        }, errorHandler);
+      }
+      window.webkitRequestFileSystem(window.PERSISTENT, grantedBytes, onInitFs, errorHandler);
+    },
+    errorHandler);
+} */
 
 chrome.runtime.onInstalled.addListener(function (details) {
   //removeVersions();
