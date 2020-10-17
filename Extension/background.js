@@ -15,7 +15,6 @@ const requests = () => {
       console.log('webRequest1', 0, performance.now()); time = performance.now();
       objectOfTabsToStop[tabId] = { stop: true, debugger: false };
       chrome.debugger.attach(debuggeeId, '1.3', () => {
-
         console.log('debugger attached', performance.now() - time);
         objectOfTabsToStop[tabId].debugger = true;
         chrome.debugger.sendCommand(
@@ -153,13 +152,28 @@ if (settingsObject.useWorkerActually === true) {
 
 let contentScripts = ["ultraThemeCss.js", "settings.js"]
 
+chrome.webNavigation.onCommitted.addListener(details => {
+  console.log(performance.now(), 'webNavigation')
+  injectContent(details.tabId);
+}, {
+  url: [{
+    hostContains: "lichess.org"
+    //,urlMatches: "^https:\/\/(lichess\.org|lichess\.dev)\/(\w{8}|\w{12})(\/white|\/black)?$"
+  }, {
+    hostContains: "lichess.dev",
+  }]
+});
+//|mskchess\.ru
+
 chrome.webRequest.onCompleted.addListener((details) => {
+  console.log(details)
   if (details.type === 'main_frame') {
-    injectContent(details.tabId);
+    console.log(performance.now(), 'webRequest')
+    // injectContent(details.tabId);
   }
 },
   {
-    urls: ["https://lichess.org/*", "https://lichess.dev/*", "https://mskchess.ru/*"]
+    urls: ["https://lichess.org/*", "https://lichess.dev/*"/* , "https://mskchess.ru/*" */]
   })
 
 const addOtherContentScripts = (tabId) => {
