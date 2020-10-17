@@ -39,7 +39,8 @@
         "https://mskchess.ru/*",
         "debugger",
         "tabs",
-        "storage"
+        "storage",
+        "webNavigation"
     ],
     "web_accessible_resources": [
         "settings.js",

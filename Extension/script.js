@@ -1486,10 +1486,18 @@ if (isGame === true) {
       KnightAndRooks: () => {
          let KnightClass = document.getElementsByClassName(objGA.myCol + " knight");
          let RookClass = document.getElementsByClassName(objGA.myCol + " rook");
-         let n0, n1;
-         (objGA.myCol === 'white' && (objGA.n0 = n0 = 0, objGA.n1 = n1 = 1)) || (objGA.n0 = n0 = 1, objGA.n1 = n1 = 0);
+         /*  let n0, n1;
+          (objGA.myCol === 'white' && (objGA.n0 = n0 = 0, objGA.n1 = n1 = 1)) || (objGA.n0 = n0 = 1, objGA.n1 = n1 = 0);
+  */
          if (KnightClass.length > 0) {
-            objGA.leftKnight = KnightClass[n0]; objGA.rightKnight = KnightClass[n1];
+            // objGA.leftKnight = KnightClass[n0]; objGA.rightKnight = KnightClass[n1];
+            let n0, n1;
+            if (KnightClass.length === 1) {
+               objGA.leftKnight = KnightClass[0]; objGA.rightKnight = undefined;
+            } else {
+               (KnightClass[1].getBoundingClientRect().x >= KnightClass[0].getBoundingClientRect().x && (n0 = 0, n1 = 1)) || (n0 = 1, n1 = 0);
+               objGA.leftKnight = KnightClass[n0]; objGA.rightKnight = KnightClass[n1];
+            }
             if (objGA.rightKnight) {
                if (useKeyboard === true) {
                   // objGA.rightKnight.style.backgroundImage = "url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNDUgNDUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1IDQ1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHN0eWxlIHR5cGU9InRleHQvY3NzIj4uc3Qwe2Rpc3BsYXk6bm9uZTt9LnN0MXtkaXNwbGF5OmlubGluZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDt9LnN0MntkaXNwbGF5OmlubGluZTtmaWxsOiNFQ0VDRUM7c3Ryb2tlOiNFQ0VDRUM7c3Ryb2tlLXdpZHRoOjEuNTtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7fS5zdDN7ZGlzcGxheTppbmxpbmU7ZmlsbDojRUNFQ0VDO30uc3Q0e2Rpc3BsYXk6bm9uZTtzdHJva2U6I0ZGRkZGRjtzdHJva2Utd2lkdGg6MjtzdHJva2UtbWl0ZXJsaW1pdDoxMDt9LnN0NXtzdHJva2U6IzMxQTgwMDtzdHJva2Utd2lkdGg6My4yMDc1O3N0cm9rZS1taXRlcmxpbWl0OjEwO30uc3Q2e2ZpbGw6I0ZGRkZGRjtzdHJva2U6IzBEMjYwMDtzdHJva2Utd2lkdGg6MS4wNzA5O3N0cm9rZS1taXRlcmxpbWl0OjEwO30uc3Q3e2ZpbGw6I0ZGRkZGRjtzdHJva2U6IzNCQUEwMDtzdHJva2Utd2lkdGg6MS44NzU7c3Ryb2tlLW1pdGVybGltaXQ6MTA7fS5zdDh7ZmlsbDojRkYwMDAwO308L3N0eWxlPjxnIGNsYXNzPSJzdDAiPjxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0yMiwxMGMxMC41LDEsMTYuNSw4LDE2LDI5SDE1YzAtOSwxMC02LjUsOC0yMSIvPjxwYXRoIGNsYXNzPSJzdDEiIGQ9Ik0yNCwxOGMwLjQsMi45LTUuNSw3LjQtOCw5Yy0zLDItMi44LDQuMy01LDRjLTEtMC45LDEuNC0zLDAtM2MtMSwwLDAuMiwxLjItMSwyYy0xLDAtNCwxLTQtNGMwLTIsNi0xMiw2LTEyczEuOS0xLjksMi0zLjVjLTAuNy0xLTAuNS0yLTAuNS0zYzEtMSwzLDIuNSwzLDIuNWgyYzAsMCwwLjgtMiwyLjUtM2MxLDAsMSwzLDEsMyIvPjxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik05LjUsMjUuNUM5LjUsMjUuOCw5LjMsMjYsOSwyNnMtMC41LTAuMi0wLjUtMC41UzguNywyNSw5LDI1UzkuNSwyNS4yLDkuNSwyNS41eiBNMTQuOSwxNS43Yy0wLjQsMC43LTAuOSwxLjItMS4yLDEuMWMtMC4yLTAuMS0wLjEtMC44LDAuMy0xLjVsMCwwYzAuNC0wLjcsMC45LTEuMiwxLjItMS4xQzE1LjUsMTQuMywxNS40LDE1LDE0LjksMTUuN0wxNC45LDE1Ljd6Ii8+PHBhdGggY2xhc3M9InN0MyIgZD0iTTI0LjUsMTAuNEwyNCwxMS44bDAuNSwwLjFjMy4xLDEsNS42LDIuNSw3LjksNi44czMuMywxMC4zLDIuOCwyMC4ydjAuNWgyLjN2LTAuNWMwLjUtMTAuMS0wLjktMTYuOC0zLjMtMjEuM1MyOC40LDExLDI1LDEwLjRDMjUuMSwxMC41LDI0LjYsMTAuNCwyNC41LDEwLjR6Ii8+PC9nPjxwb2x5Z29uIGNsYXNzPSJzdDQiIHBvaW50cz0iNy4yLDguOSAzOC41LDguOSAzOC41LDQwLjQgMjIuMSw0MC40IDIyLjEsMjQgNy4yLDI0ICIvPjxwb2x5Z29uIGNsYXNzPSJzdDUiIHBvaW50cz0iMjUuOSw0MS4yIDM4LjIsNDEuMiAzOC4yLDUuMiA0LjIsNS4yIDQuMiwyMSAxMC4zLDIxIDEwLjMsMTUuNiAyMy42LDE1LjYgMjMuNiw0MS4yICIvPjxwb2x5Z29uIGNsYXNzPSJzdDYiIHBvaW50cz0iMjUuOSw0MCAzOC4yLDQwIDM4LjIsNiA0LjIsNiA0LjIsMjAuOSAxMC4zLDIwLjkgMTAuMywxNS44IDIzLjYsMTUuOCAyMy42LDQwICIvPjxwb2x5Z29uIGNsYXNzPSJzdDciIHBvaW50cz0iNS40LDcuMyA1LjQsMTkuNSA5LjEsMTkuNSA5LjEsMTQuNyAyNC45LDE0LjcgMjQuOSwzOC44IDM3LjIsMzguOCAzNy4yLDguOSAzNy4yLDcuMyAiLz48Y2lyY2xlIGNsYXNzPSJzdDgiIGN4PSIzNiIgY3k9IjM0LjUiIHI9IjguNSIvPjwvc3ZnPg==')";
@@ -1498,7 +1506,14 @@ if (isGame === true) {
             }
          }
          if (RookClass.length > 0) {
-            objGA.leftRook = RookClass[n0]; objGA.rightRook = RookClass[n1];
+            //objGA.leftRook = RookClass[n0]; objGA.rightRook = RookClass[n1];
+            let n0, n1;
+            if (RookClass.length === 1) {
+               objGA.leftRook = RookClass[0]; objGA.rightRook = undefined;
+            } else {
+               (RookClass[1].getBoundingClientRect().x >= RookClass[0].getBoundingClientRect().x && (n0 = 0, n1 = 1)) || (n0 = 1, n1 = 0);
+               objGA.leftRook = RookClass[n0]; objGA.rightRook = RookClass[n1];
+            }
             if (objGA.rightRook) {
                if (useKeyboard === true) {
                   // objGA.rightRook.style.backgroundImage = "url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgNDUgNDUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDQ1IDQ1OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHN0eWxlIHR5cGU9InRleHQvY3NzIj4uc3Qwe2Rpc3BsYXk6bm9uZTt9LnN0MXtkaXNwbGF5OmlubGluZTtmaWxsOiNGRkZGRkY7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuNTtzdHJva2UtbGluZWpvaW46cm91bmQ7fS5zdDJ7ZGlzcGxheTppbmxpbmU7ZmlsbDojRkZGRkZGO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjU7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30uc3Qze2Rpc3BsYXk6aW5saW5lO2ZpbGw6I0ZGRkZGRjtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41O30uc3Q0e2Rpc3BsYXk6aW5saW5lO2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS41O3N0cm9rZS1saW5lY2FwOnJvdW5kO30uc3Q1e2Rpc3BsYXk6bm9uZTtmaWxsOiNGRkZGRkY7c3Ryb2tlOiNGQzAwMDA7c3Ryb2tlLXdpZHRoOjI7c3Ryb2tlLW1pdGVybGltaXQ6MTA7fS5zdDZ7ZmlsbDojRkZGRkZGO3N0cm9rZTojOUUwRUMxO3N0cm9rZS13aWR0aDo1O30uc3Q3e2ZpbGw6I0ZGMDAwMDt9PC9zdHlsZT48ZyBjbGFzcz0ic3QwIj48cGF0aCBjbGFzcz0ic3QxIiBkPSJNOSwzOWgyN3YtM0g5VjM5eiBNMTIsMzZ2LTRoMjF2NEgxMnogTTExLDE0VjloNHYyaDVWOWg1djJoNVY5aDR2NSIvPjxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0zNCwxNGwtMywzSDE0bC0zLTMiLz48cGF0aCBjbGFzcz0ic3QzIiBkPSJNMzEsMTd2MTIuNUgxNFYxNyIvPjxwYXRoIGNsYXNzPSJzdDIiIGQ9Ik0zMSwyOS41bDEuNSwyLjVoLTIwbDEuNS0yLjUiLz48cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMTEsMTRoMjMiLz48L2c+PHBvbHlnb24gY2xhc3M9InN0NSIgcG9pbnRzPSIyMi41LDQuMyA1LjMsMzkuNSAzOS44LDM5LjUgIi8+PHJlY3QgeD0iOSIgeT0iNS41IiBjbGFzcz0ic3Q2IiB3aWR0aD0iMjciIGhlaWdodD0iMzUiLz48Y2lyY2xlIGNsYXNzPSJzdDciIGN4PSIzNiIgY3k9IjM0LjUiIHI9IjguNSIvPjwvc3ZnPg==')"
