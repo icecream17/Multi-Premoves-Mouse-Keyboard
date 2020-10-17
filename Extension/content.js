@@ -421,8 +421,10 @@ if (isGame === true) {
                             opClock = document.getElementsByClassName('rclock rclock-top')[0];
                         let myTimeEl = myClock.getElementsByClassName("time")[0];
                         let oppTimeEl = opClock.getElementsByClassName("time")[0];
+                        if (!myTimeEl || !oppTimeEl) return;
                         clockObserver.observe(myTimeEl, configClock);
                         clockObserver.observe(oppTimeEl, configClock);
+
                     }
                 });
                 roundObserver.observe(round, { childList: true, subtree: true });
