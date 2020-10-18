@@ -152,9 +152,15 @@ if (settingsObject.useWorkerActually === true) {
 
 let contentScripts = ["ultraThemeCss.js", "settings.js"]
 
+
+let arrayOfTabsToDelayInjection = [];
 chrome.webNavigation.onCommitted.addListener(details => {
   console.log(performance.now(), 'webNavigation')
-  injectContent(details.tabId);
+  let indexOfTab = arrayOfTabsToDelayInjection.indexOf(details.tabId)
+  if (indexOfTab !== -1) {
+    injectContent(details.tabId);
+    arrayOfTabsToDelayInjection.splice(indexOfTab, 1)
+  }
 }, {
   url: [{
     hostContains: "lichess.org"
@@ -166,10 +172,16 @@ chrome.webNavigation.onCommitted.addListener(details => {
 //|mskchess\.ru
 
 chrome.webRequest.onCompleted.addListener((details) => {
-  console.log(details)
   if (details.type === 'main_frame') {
     console.log(performance.now(), 'webRequest')
-    // injectContent(details.tabId);
+    chrome.tabs.get(details.tabId, (info) => {
+      console.log(info, info.url, performance.now());
+      if (!info.url.includes(`chrome:`)) {
+        injectContent(details.tabId);
+      } else {
+        arrayOfTabsToDelayInjection.push(details.tabId)
+      }
+    })
   }
 },
   {
@@ -177,17 +189,22 @@ chrome.webRequest.onCompleted.addListener((details) => {
   })
 
 const addOtherContentScripts = (tabId) => {
-  contentScripts.map(x => {
-    chrome.tabs.executeScript(tabId, {
-      file: x,
-      runAt: "document_start"
-    });
-  })
+  try {
+    contentScripts.map(x => {
+      chrome.tabs.executeScript(tabId, {
+        file: x,
+        runAt: "document_start"
+      });
+
+    })
+  } catch (e) { console.log(e) }
+
+  return true;
 }
 
 const injectContent = (tabId) => {
   if (updateInfo.versions.content.v <= initialUpdateInfo.versions.content.v) {
-    addOtherContentScripts(tabId)
+    if (!addOtherContentScripts(tabId)) return;
     chrome.tabs.executeScript(tabId, {
       file: "content.js",
       runAt: "document_start"
