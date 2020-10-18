@@ -829,35 +829,38 @@ if (isGame === true) {
                 case "out":
                     if (sendToBackgroundToProduceSound === true) {
                         chrome.runtime.sendMessage({ beep: "do1" });
-                        lastMoveIndicator.style.display = 'none'
-                        lastMoveIndicator2.style.display = 'none'
+                        if (lastMoveIndicator) {
+                            lastMoveIndicator.style.display = 'none'
+                            lastMoveIndicator2.style.display = 'none'
+                        }
                     }
                     break;
                 case "in":
                     if (sendToBackgroundToProduceSound === true) {
                         chrome.runtime.sendMessage({ beep: "do" });
+                        if (lastMoveIndicator) {
+                            let move = [event.data.move.substr(0, 2), event.data.move.substr(2, 4)]
+                            let position1 = [ConvertToDigits[move[1][0]], Number(move[1][1])]
+                            let position2 = [ConvertToDigits[move[0][0]], Number(move[0][1])]
+                            if (event.data.myColor === 'white') {
+                                position1[1] = 9 - position1[1]
+                                position2[1] = 9 - position2[1]
+                            } else {
+                                position1[0] = 9 - position1[0]
+                                position2[0] = 9 - position2[0]
+                            }
+                            lastMoveIndicator.style.left = String(bX + (position1[0] - 1) * sqS) + 'px'
+                            lastMoveIndicator.style.top = String(bY + position1[1] * sqS - 10) + 'px'
+                            lastMoveIndicator.style.display = 'block'
 
-                        let move = [event.data.move.substr(0, 2), event.data.move.substr(2, 4)]
-                        let position1 = [ConvertToDigits[move[1][0]], Number(move[1][1])]
-                        let position2 = [ConvertToDigits[move[0][0]], Number(move[0][1])]
-                        if (event.data.myColor === 'white') {
-                            position1[1] = 9 - position1[1]
-                            position2[1] = 9 - position2[1]
-                        } else {
-                            position1[0] = 9 - position1[0]
-                            position2[0] = 9 - position2[0]
+                            lastMoveIndicator2.style.left = String(bX + (position2[0] - 1) * sqS) + 'px'
+                            lastMoveIndicator2.style.top = String(bY + position2[1] * sqS - 10) + 'px'
+                            lastMoveIndicator2.style.display = 'block'
+                            setTimeout(() => {
+                                lastMoveIndicator.style.display = 'none'
+                                lastMoveIndicator2.style.display = 'none'
+                            }, 150);
                         }
-                        lastMoveIndicator.style.left = String(bX + (position1[0] - 1) * sqS) + 'px'
-                        lastMoveIndicator.style.top = String(bY + position1[1] * sqS - 10) + 'px'
-                        lastMoveIndicator.style.display = 'block'
-
-                        lastMoveIndicator2.style.left = String(bX + (position2[0] - 1) * sqS) + 'px'
-                        lastMoveIndicator2.style.top = String(bY + position2[1] * sqS - 10) + 'px'
-                        lastMoveIndicator2.style.display = 'block'
-                        setTimeout(() => {
-                            lastMoveIndicator.style.display = 'none'
-                            lastMoveIndicator2.style.display = 'none'
-                        }, 150);
                     }
                     break;
                 case "clock":
@@ -1047,11 +1050,31 @@ const modify = () => {
                 let replaceWith = boardMatch.replace('=', '=globalBoardReference=')
                 completed = completed.replace(boardMatch, replaceWith);
 
+                /*  let outComingMoveMatch = completed.match(/[a-zA-Z]+\.stats\.dragged ?= ?!0/)[0];
+                 let replaceoutComingMoveWith = outComingMoveMatch.replace('0', `0, moveFromRound('out')`)
+                 completed = completed.replace(outComingMoveMatch, replaceoutComingMoveWith); */
+                // /[a-zA-Z]+\.stats\.dragged ?= ?!0/
+
+                let moveReturnFunction = completed.match(/return ?!0 ?!==/)[0];
+                let replaceMoveReturnFunction = `
+                moveFromRound(arguments);
+                ${moveReturnFunction}`
+                completed = completed.replace(moveReturnFunction, replaceMoveReturnFunction);
+                //
+
                 let firstOne = document.createElement('script');
                 let secondOne = document.createElement('script');
                 firstOne.innerHTML = `
             var globalStateReference;
             var globalBoardReference;
+            const moveFromRound = (...args) => {
+               setTimeout(() => {
+                    console.log(...args, performance.now(), 'round-return')  
+                   /* objGA.inMoves = {}; objGA.whoseM(globalStateReference.turnColor);
+                    objGA.DoinMoves();*/
+                }, 0);
+            };
+            console.log('r');
             ${completed}`;
                 secondOne.innerHTML = `console.log(3);${text}`;
                 firstOne.setAttribute('nonce', nonce)

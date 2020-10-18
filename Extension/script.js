@@ -1,12 +1,12 @@
 
 
-
+let objGA;
 
 /* var globalStateReference;
 var globalBoardReference; */
-const moveFromRound = (...args) => {
+/* const moveFromRound = (...args) => {
    console.log(...args)
-}
+} */
 
 if (settingsObject.createUI === true) {
    const multiPremoveSettingsString = localStorage.getItem('multiPremoveSettings');
@@ -129,7 +129,7 @@ if (isGame === true) {
    document.addEventListener('keydown', checkKeyDownBeforePageLoaded)
    document.addEventListener('keyup', checkKeyUpBeforePageLoaded)
 
-   let objGA;
+   //let objGA;
    let console2 = console.log;
    let consoleBackUp = function () { };
    let currentPieceSet;
@@ -324,10 +324,10 @@ if (isGame === true) {
             lastMoveMadeUCI = parsed.d.u.substr(0, 4);
             LastPieceThatMoved = currentPieceSet[fromToArr[0]].role;
             currentPieceSet = convertToPieceObject(chess.board());
-
+            console.info('pre-timeout-out', performance.now())
             setTimeout(() => {
                setTimeout(() => {
-                  // console.info('outcoming', performance.now(), document.getElementsByClassName("rclock rclock-bottom running")[0] === undefined)
+                  console.info('outcoming', performance.now())
                   objGA.setPieces(currentPieceSet);
                   objGA.moves(undefined); objGA.whoseM(whoseMove);
                   objGA.inMoves = {}; objGA.DoinMoves()
@@ -806,7 +806,6 @@ if (isGame === true) {
       },
       whoseM(color) {
          objGA.player = color;
-         //console.log(objGA.player)
       },
       keys: [],
       keysT: [],
@@ -815,15 +814,19 @@ if (isGame === true) {
          try {
             objGA.beginning = false;
             const pieces = Object.fromEntries(objGA.pieces);
-            let inMovesConvertedFromMap = objGA.inMoves;
-            for (const square in inMovesConvertedFromMap) {
-               inMovesConvertedFromMap[square].forEach((dest) => {
-                  objGA.DestPiece[dest] = objGA.DestPiece[dest] || {};
-                  objGA.DestPiece[dest][pieces[square].role] = objGA.DestPiece[dest][pieces[square].role] || [];
-                  objGA.DestPiece[dest][pieces[square].role].push(square);
-               })
+            //let inMovesConvertedFromMap = objGA.inMoves;
+            if (globalStateReference.movable.dests !== undefined) {
+               let inMovesConvertedFromMap = Object.fromEntries(globalStateReference.movable.dests)
+               for (const square in inMovesConvertedFromMap) {
+                  inMovesConvertedFromMap[square].forEach((dest) => {
+                     objGA.DestPiece[dest] = objGA.DestPiece[dest] || {};
+                     objGA.DestPiece[dest][pieces[square].role] = objGA.DestPiece[dest][pieces[square].role] || [];
+                     objGA.DestPiece[dest][pieces[square].role].push(square);
+                  })
+               }
+            } else {
+               objGA.DestPiece = {};
             }
-
          } catch {
 
          }
@@ -1882,7 +1885,7 @@ if (isGame === true) {
          objGA.stillexecute = true;
          // setTimeout(() => {
 
-         if (objGA.player !== objGA.myCol) {
+         if (globalStateReference.turnColor !== objGA.myCol) {
             if (objGA.arrayOfPremoves.length !== 0) {
                objGA.CheckMultiPremoveAndExecute();
             }
@@ -1978,7 +1981,7 @@ if (isGame === true) {
                         objGA.UnselectMultiSquare()
                      } */
 
-                     if (useMouse === true && objGA.isAPieceSelected === true/*  && objGA.player !== objGA.myCol */) {
+                     if (useMouse === true && objGA.isAPieceSelected === true) {
                         objGA.resumeTheMoveAfterMultiState()
                      }
 
@@ -2029,7 +2032,7 @@ if (isGame === true) {
          }
 
 
-         if (useMouse === true && objGA.multiPremState === false && objGA.isAPieceSelected === true && objGA.player !== objGA.myCol) {
+         if (useMouse === true && objGA.multiPremState === false && objGA.isAPieceSelected === true && globalStateReference.turnColor !== objGA.myCol) {
             objGA.resumeTheMoveAfterMultiState()
          }
 
@@ -2266,7 +2269,6 @@ if (isGame === true) {
       },
       setcolor: (color) => {
          objGA.myCol = color;
-         //objGA.player=color;
       },
       setPieces: (pieces) => {
          objGA.pieces = globalStateReference.pieces;
@@ -2601,7 +2603,7 @@ if (isGame === true) {
                                  }
                               });
                         }, 0);
-                     } else if (objGA.player !== objGA.myCol) {
+                     } else if (globalStateReference.turnColor !== objGA.myCol) {
                         let mouseCoordinates = [objGA.storePossibleClickMove[0], objGA.storePossibleClickMove[1], objGA.mouseDownX, objGA.mouseDownY]
                         setTimeout(() => {
                            objGA.FixMousePremoves/* .async */(mouseCoordinates[0], mouseCoordinates[1], objGA.mouseDownX, objGA.mouseDownY)
@@ -2801,7 +2803,7 @@ if (isGame === true) {
 
                   if (objGA.multiPremKeyPressed && objGA.multiPremState === true) {
                      objGA.FixMousePremoves(mouseDownX, mouseDownY, mouseUpX, mouseUpY, true);
-                  } else if (objGA.player !== objGA.myCol) {
+                  } else if (globalStateReference.turnColor !== objGA.myCol) {
                      objGA.FixMousePremoves(mouseDownX, mouseDownY, mouseUpX, mouseUpY);
                   }
                   if (objGA.storePossibleClickMove.length !== 0) {
@@ -3091,7 +3093,7 @@ if (isGame === true) {
          if (objGA.keys.length !== 0) {
             if (objGA.horiz < 9 && objGA.horiz > 0 && objGA.vertic < 9 && objGA.vertic > 0) {
 
-               if (objGA.player === objGA.myCol) {
+               if (globalStateReference.turnColor === objGA.myCol) {
                   if (objGA.arrayOfPremoves.length === 0) {
                      objGA.PlayAMove(objGA.horiz, objGA.vertic)
                   } else if (objGA.multiPremKeyPressed && objGA.multiPremState === true) {
@@ -3148,7 +3150,7 @@ if (isGame === true) {
          globalX = b[0]; globalY = b[1];
       },
       Unselect: (tx, ty) => {
-         let selected = objGA.board.getElementsByClassName('selected')[0];
+         /* let selected = objGA.board.getElementsByClassName('selected')[0];
          if (selected !== undefined) {
             let transform = selected.style.transform;
             let extraction = transform.split(',');
@@ -3156,6 +3158,11 @@ if (isGame === true) {
             extraction[1] = Number(extraction[1].replace(/\D/g, '')) + objGA.sqsize / 2;
             objGA.incomingPosition(extraction[0], extraction[1]);
             objGA.outcomingPosition(extraction[0], extraction[1]);
+         } */
+         if (globalStateReference.selected !== undefined) {
+            globalBoardReference.unselect(globalStateReference);
+            globalStateReference.draggable.current = void 0;
+            globalStateReference.dom.redraw();
          }
       },
       UnselectMultiSquare: () => {
