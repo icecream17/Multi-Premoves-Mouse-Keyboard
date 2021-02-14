@@ -705,7 +705,6 @@ if (isGame === true) {
                 canvasMoves.style.position = 'absolute';
                 canvasMoves.style.left = boardX + "px";
                 canvasMoves.style.top = boardY + "px";
-                canvasMoves.style.top = boardY + "px";
                 canvasMoves.style.zIndex = 100;
                 canvasMoves.style.pointerEvents = 'none';
                 let arrOfPieceNames = ['pawn', 'knight', 'knight', 'bishop', 'rook', 'rook', 'queen', 'king']
@@ -715,17 +714,14 @@ if (isGame === true) {
                     if (previousPieceName === arrOfPieceNames[i]) {
                         n = n === 1 ? 0 : 1;
                         number = number === 'second' ? '' : 'second'
-                    }
-                    else {
+                    } else {
+                        number = "";
                         if (myColor === 'white') {
                             n = 0;
-                            number = "";
                         } else if (arrOfPieceNames[i] === 'knight' || arrOfPieceNames[i] === 'rook') {
                             n = 1;
-                            number = "";
                         } else {
                             n = 0;
-                            number = "";
                         }
                     }
                     let el = document.getElementsByClassName(`${myColor} ${arrOfPieceNames[i]}`)[n];
