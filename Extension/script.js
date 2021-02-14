@@ -57,7 +57,7 @@ if (isGame === true) {
       var fen = settingsObject.method;
    }
 
-   let BothClickAndDrug = false;
+   let BothClickAndDrag = false;
    let globalMultiKeyValueBeforePageLoad = false;
 
    let CyrillicToLatin = {
@@ -511,7 +511,7 @@ if (isGame === true) {
                initialTimeForBerserk = gameInfo.data.clock.initial * 100;
             }
             numberOfPlies = gameInfo.data.game.turns;
-            if (gameInfo.data.pref.moveEvent === 2) { BothClickAndDrug = true; }
+            if (gameInfo.data.pref.moveEvent === 2) { BothClickAndDrag = true; }
             let currentPositionFEN = gameInfo.data.game.fen;
             chess = new Chess(currentPositionFEN)
             currentPieceSet = convertToPieceObject(chess.board());
@@ -2554,7 +2554,7 @@ if (isGame === true) {
                if (objGA.multiPremKeyPressed === true) {
                   e.preventDefault();
                   e.stopImmediatePropagation();
-                  if (BothClickAndDrug === true) {
+                  if (BothClickAndDrag === true) {
                      objGA.preventNextMouseUp = true;
                   }
 
@@ -2586,7 +2586,7 @@ if (isGame === true) {
             objGA.mouseDownX = Math.ceil((e.clientX - objGA.x0) / objGA.sqsize);
             objGA.mouseDownY = Math.ceil((e.clientY - objGA.y0) / objGA.sqsize);
 
-            if (BothClickAndDrug === true) {
+            if (BothClickAndDrag === true) {
                if (objGA.storePossibleClickMove.length !== 0 && (objGA.storePossibleClickMove[0] !== objGA.mouseDownX || objGA.storePossibleClickMove[1] !== objGA.mouseDownY)) {
                   if (objGA.mouseDownX < 9 && objGA.mouseDownY < 9 && objGA.mouseDownX > 0 && objGA.mouseDownY > 0) {
                      if (objGA.multiPremKeyPressed && objGA.multiPremState === true) {
@@ -2757,12 +2757,12 @@ if (isGame === true) {
             if (objGA.multiPremKeyPressed === true
                && objGA.multiPremState === true
                && e.target.tagName === 'CG-BOARD') {
-               if (BothClickAndDrug === false || objGA.preventDragMoveAfterClickMove.prevent === false || objGA.preventNextMouseUp === true/*|| (objGA.mouseDownX !== objGA.preventDragMoveAfterClickMove.coordinates[0] || objGA.mouseDownY !== objGA.preventDragMoveAfterClickMove.coordinates[1]) */) {
+               if (BothClickAndDrag === false || objGA.preventDragMoveAfterClickMove.prevent === false || objGA.preventNextMouseUp === true/*|| (objGA.mouseDownX !== objGA.preventDragMoveAfterClickMove.coordinates[0] || objGA.mouseDownY !== objGA.preventDragMoveAfterClickMove.coordinates[1]) */) {
                   e.preventDefault();
                   e.stopImmediatePropagation();
                   //console.log('was prevented')
 
-                  if (BothClickAndDrug === true) {
+                  if (BothClickAndDrag === true) {
                      objGA.preventNextMouseUp = false
                   }
                }
@@ -2797,7 +2797,7 @@ if (isGame === true) {
                && mouseDownX > 0 && mouseDownY < 9 && mouseUpX > 0 && mouseUpY < 9
             ) {
 
-               if (BothClickAndDrug === false || objGA.preventDragMoveAfterClickMove.prevent === false
+               if (BothClickAndDrag === false || objGA.preventDragMoveAfterClickMove.prevent === false
                   || (mouseDownX !== objGA.preventDragMoveAfterClickMove.coordinates[0]
                      || mouseDownY !== objGA.preventDragMoveAfterClickMove.coordinates[1])) {
 
@@ -2809,7 +2809,7 @@ if (isGame === true) {
                   if (objGA.storePossibleClickMove.length !== 0) {
                      objGA.storePossibleClickMove.length = 0;
                   }
-               } else if (BothClickAndDrug === true) {
+               } else if (BothClickAndDrag === true) {
                   objGA.preventDragMoveAfterClickMove.prevent = false;
                   objGA.preventDragMoveAfterClickMove.coordinates.length = 0;
                }
@@ -2819,7 +2819,7 @@ if (isGame === true) {
             }
          }
 
-         if (BothClickAndDrug === true && ((mouseDownX === mouseUpX && mouseDownY === mouseUpY) || (mouseUpX > 8 || mouseUpX < 0 || mouseUpY > 8 || mouseUpY < 0))) {
+         if (BothClickAndDrag === true && ((mouseDownX === mouseUpX && mouseDownY === mouseUpY) || (mouseUpX > 8 || mouseUpX < 0 || mouseUpY > 8 || mouseUpY < 0))) {
             if (objGA.storePossibleClickMove.length === 0) {
                if (objGA.preventDragMoveAfterClickMove.prevent === false || (mouseDownX !== objGA.preventDragMoveAfterClickMove.coordinates[0] || mouseDownY !== objGA.preventDragMoveAfterClickMove.coordinates[1])) {
                   let multi = false;
@@ -2847,7 +2847,7 @@ if (isGame === true) {
          }
 
 
-         if (BothClickAndDrug === false && objGA.isAPieceSelected === true) {
+         if (BothClickAndDrag === false && objGA.isAPieceSelected === true) {
             window.postMessage({
                type: 'selected', selected: false
             }, "*");
@@ -3131,7 +3131,7 @@ if (isGame === true) {
 
       renewFen: (a, b) => {
          objGA.stillexecute = false;
-         if (BothClickAndDrug === false) {
+         if (BothClickAndDrag === false) {
             if (useMouse === true) { objGA.Unselect() }
             objGA.incomingPosition(a[0], a[1]);
             objGA.outcomingPosition(b[0], b[1]);
